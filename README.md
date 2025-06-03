@@ -33,6 +33,8 @@ dotfiles/
 │ ├── settings.json # VSCode 编辑器的用户设置
 │ └── extensions.list # VSCode 插件列表（用于自动恢复）
 ├── iterm2/
+│ ├── com.googlecode.iterm2.plist # iTerm2 主要配置文件（包含主题、快捷键等）
+│ ├── README.md # iTerm2 配置说明文档
 │ └── Dracula.itermcolors # iTerm2 主题配置文件（可导入）
 ├── macos/
 │ └── defaults.sh # macOS 系统偏好设置脚本（如隐藏文件显示）

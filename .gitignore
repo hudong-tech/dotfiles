@@ -73,7 +73,6 @@ credentials.*
 .zplug/
 
 # iTerm2
-com.googlecode.iterm2.plist
 
 # Homebrew
 Brewfile.lock.json
