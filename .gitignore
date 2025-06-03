@@ -1,0 +1,138 @@
+# ===================================
+# DotFiles 项目 .gitignore
+# ===================================
+
+# macOS 系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 临时文件和备份文件
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+.#*
+\#*#
+
+# 个人敏感信息文件
+.extra
+.secrets
+.env.local
+.env.private
+*.key
+*.pem
+credentials.*
+
+# Git 相关
+.git/
+*.orig
+
+# 编辑器和 IDE 临时文件
+# Vim
+*.swp
+*.swo
+.viminfo
+.vim/bundle/
+.vim/plugged/
+.vim/.netrwhist
+
+# VSCode
+.vscode/settings.json.backup
+.vscode/extensions/
+.vscode/logs/
+.vscode/workspaceStorage/
+
+# JetBrains IDEs
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/dictionaries/
+.idea/shelf/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/httpRequests/
+.idea/caches/
+.idea/uiDesigner.xml
+.idea/dbnavigator.xml
+
+# Zsh 相关
+.zsh_history
+.zsh_sessions/
+.zcompdump*
+.zplug/
+
+# iTerm2
+com.googlecode.iterm2.plist
+
+# Homebrew
+Brewfile.lock.json
+
+# 日志文件
+*.log
+logs/
+log/
+
+# 缓存目录
+cache/
+.cache/
+tmp/
+temp/
+
+# Node.js (如果有相关配置)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (如果有相关配置)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.pytest_cache/
+
+# 本地配置覆盖文件
+local.*
+*.local
+
+# 安装脚本生成的文件
+install.log
+setup.log
+
+# 个人笔记和草稿
+notes/
+drafts/
+TODO.md
+NOTES.md
+
+# 测试文件
+test/
+tests/
+*_test.*
+test_*
+
+# 文档生成文件
+docs/_build/
+site/
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+
+# 特定于用户的配置文件（这些通常包含个人信息）
+.gitconfig.local
+.extra.zsh
+.private 
