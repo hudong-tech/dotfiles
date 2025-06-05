@@ -4,8 +4,8 @@
 # 目标：提升代码阅读体验
 # ==============================================================================
 
-# 字体仓库
-tap "homebrew/cask-fonts"
+# 注意：homebrew/cask-fonts 已废弃，字体现在直接可用
+# tap "homebrew/cask-fonts"  # 已废弃，删除此行
 
 cask "font-fira-code"        # 支持连字的编程字体
 cask "font-jetbrains-mono"   # JetBrains 官方字体

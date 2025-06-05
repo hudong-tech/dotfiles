@@ -37,10 +37,112 @@ warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 error() { echo -e "${RED}❌ $1${NC}"; }
 header() { echo -e "${PURPLE}🍺 $1${NC}"; }
 
-# 全局状态追踪
-declare -a INSTALLED_MODULES=()
-declare -a FAILED_MODULES=()
-declare -a SKIPPED_MODULES=()
+# 使用普通变量和函数替代关联数组
+MODULE_INSTALL_DETAILS=""
+MODULE_FAILED_PACKAGES=""  
+MODULE_SUCCESS_PACKAGES=""
+MODULE_SKIPPED_PACKAGES=""
+MODULE_SKIPPED_REASONS=""
+
+# 辅助函数：设置模块详情
+set_module_detail() {
+    local module="$1"
+    local detail="$2"
+    MODULE_INSTALL_DETAILS=$(echo "$MODULE_INSTALL_DETAILS" | sed "s/${module}:[^|]*|//g")
+    MODULE_INSTALL_DETAILS="${MODULE_INSTALL_DETAILS}${module}:${detail}|"
+}
+
+# 辅助函数：获取模块详情
+get_module_detail() {
+    local module="$1"
+    echo "$MODULE_INSTALL_DETAILS" | grep -o "${module}:[^|]*" | cut -d: -f2-
+}
+
+# 辅助函数：添加失败包
+add_failed_package() {
+    local module="$1"
+    local packages="$2"
+    if [[ -n "$packages" ]]; then
+        MODULE_FAILED_PACKAGES=$(echo "$MODULE_FAILED_PACKAGES" | sed "s/${module}:[^|]*|//g")
+        MODULE_FAILED_PACKAGES="${MODULE_FAILED_PACKAGES}${module}:${packages}|"
+    fi
+}
+
+# 辅助函数：获取失败包列表
+get_failed_packages() {
+    local module="$1"
+    echo "$MODULE_FAILED_PACKAGES" | grep -o "${module}:[^|]*" | cut -d: -f2- | tr ',' ' '
+}
+
+# 辅助函数：添加成功包
+add_success_package() {
+    local module="$1"
+    local packages="$2"
+    if [[ -n "$packages" ]]; then
+        MODULE_SUCCESS_PACKAGES=$(echo "$MODULE_SUCCESS_PACKAGES" | sed "s/${module}:[^|]*|//g")
+        MODULE_SUCCESS_PACKAGES="${MODULE_SUCCESS_PACKAGES}${module}:${packages}|"
+    fi
+}
+
+# 辅助函数：获取成功包列表
+get_success_packages() {
+    local module="$1"
+    echo "$MODULE_SUCCESS_PACKAGES" | grep -o "${module}:[^|]*" | cut -d: -f2- | tr ',' ' '
+}
+
+# 辅助函数：获取成功包数量
+get_success_count() {
+    local module="$1"
+    local packages=$(get_success_packages "$module")
+    if [[ -n "$packages" ]]; then
+        echo "$packages" | wc -w | tr -d ' '
+    else
+        echo "0"
+    fi
+}
+
+# 辅助函数：获取失败包数量
+get_failed_count() {
+    local module="$1"
+    local packages=$(get_failed_packages "$module")
+    if [[ -n "$packages" ]]; then
+        echo "$packages" | wc -w | tr -d ' '
+    else
+        echo "0"
+    fi
+}
+
+# 辅助函数：添加跳过包
+add_skipped_package() {
+    local module="$1"
+    local packages="$2"
+    if [[ -n "$packages" ]]; then
+        MODULE_SKIPPED_PACKAGES=$(echo "$MODULE_SKIPPED_PACKAGES" | sed "s/${module}:[^|]*|//g")
+        MODULE_SKIPPED_PACKAGES="${MODULE_SKIPPED_PACKAGES}${module}:${packages}|"
+    fi
+}
+
+# 辅助函数：添加跳过原因
+add_skipped_reasons() {
+    local module="$1"
+    local reasons="$2"
+    if [[ -n "$reasons" ]]; then
+        MODULE_SKIPPED_REASONS=$(echo "$MODULE_SKIPPED_REASONS" | sed "s/${module}:[^|]*|//g")
+        MODULE_SKIPPED_REASONS="${MODULE_SKIPPED_REASONS}${module}:${reasons}|"
+    fi
+}
+
+# 辅助函数：获取跳过包列表
+get_skipped_packages() {
+    local module="$1"
+    echo "$MODULE_SKIPPED_PACKAGES" | grep -o "${module}:[^|]*" | cut -d: -f2- | tr ',' ' '
+}
+
+# 辅助函数：获取跳过原因
+get_skipped_reasons() {
+    local module="$1"
+    echo "$MODULE_SKIPPED_REASONS" | grep -o "${module}:[^|]*" | cut -d: -f2- | tr ',' ' '
+}
 
 # ==============================================================================
 # 改进的工具函数
@@ -88,18 +190,20 @@ safe_command() {
     while [[ $attempt -le $max_retries ]]; do
         info "执行命令 (尝试 $attempt/$max_retries): ${command[*]}"
         
+        local exit_code=0
         if command -v timeout >/dev/null 2>&1; then
-            if timeout "$timeout_duration" "${command[@]}"; then
-                return 0
-            fi
+            timeout "$timeout_duration" "${command[@]}"
+            exit_code=$?
         else
             # macOS 没有 timeout，直接执行
-            if "${command[@]}"; then
-                return 0
-            fi
+            "${command[@]}"
+            exit_code=$?
         fi
         
-        local exit_code=$?
+        if [[ $exit_code -eq 0 ]]; then
+            return 0
+        fi
+        
         warning "命令执行失败 (退出码: $exit_code)"
         
         if [[ $attempt -lt $max_retries ]]; then
@@ -111,7 +215,7 @@ safe_command() {
     done
     
     error "命令执行失败，已重试 $max_retries 次"
-    return 1
+    return $exit_code  # 返回真实的退出码，而不是固定的 1
 }
 
 # 获取可用模块（过滤空模块）
@@ -129,12 +233,23 @@ get_available_modules() {
     echo "${valid_modules[@]}"
 }
 
+# 获取所有模块（包括空模块）
+get_all_modules() {
+    find "$HOMEBREW_DIR" -name "Brewfile.*" -exec basename {} \; | sed 's/Brewfile\.//' | sort
+}
+
 # 验证模块有效性（修复数组索引）
 validate_modules() {
     local modules=("$@")
     local invalid_modules=()
     local empty_modules=()
     local valid_modules=()
+    local allow_empty_modules=false
+    
+    # 如果是完整安装模式，允许空模块
+    if [[ "${modules[*]}" == *"fonts"* && "${modules[*]}" == *"essential"* && "${modules[*]}" == *"development"* && "${modules[*]}" == *"optional"* ]]; then
+        allow_empty_modules=true
+    fi
     
     for module in "${modules[@]}"; do
         local brewfile="$HOMEBREW_DIR/Brewfile.$module"
@@ -142,7 +257,13 @@ validate_modules() {
         if [[ ! -f "$brewfile" ]]; then
             invalid_modules+=("$module")
         elif is_module_empty "$brewfile"; then
-            empty_modules+=("$module")
+            if [[ "$allow_empty_modules" == true ]]; then
+                # 完整安装模式下，空模块也加入有效列表
+                valid_modules+=("$module")
+                empty_modules+=("$module")
+            else
+                empty_modules+=("$module")
+            fi
         else
             valid_modules+=("$module")
         fi
@@ -150,13 +271,17 @@ validate_modules() {
     
     if [[ ${#invalid_modules[@]} -gt 0 ]]; then
         error "以下模块不存在: ${invalid_modules[*]}"
-        info "可用模块: $(get_available_modules | tr '\n' ' ')"
+        info "可用模块: $(get_all_modules | tr '\n' ' ')"
         return 1
     fi
     
     if [[ ${#empty_modules[@]} -gt 0 ]]; then
-        warning "以下模块为空，将跳过: ${empty_modules[*]}"
-        SKIPPED_MODULES+=("${empty_modules[@]}")
+        if [[ "$allow_empty_modules" == true ]]; then
+            info "以下模块为空但仍会处理: ${empty_modules[*]}"
+        else
+            warning "以下模块为空，将跳过: ${empty_modules[*]}"
+            SKIPPED_MODULES+=("${empty_modules[@]}")
+        fi
     fi
     
     if [[ ${#valid_modules[@]} -eq 0 ]]; then
@@ -164,7 +289,7 @@ validate_modules() {
         return 1
     fi
     
-    # 更新模块列表（只包含有效模块）
+    # 更新模块列表（包含有效模块）
     modules=("${valid_modules[@]}")
     return 0
 }
@@ -238,14 +363,19 @@ install_module() {
     if is_module_empty "$brewfile"; then
         warning "模块 $module 为空，跳过安装"
         SKIPPED_MODULES+=("$module")
+        set_module_detail "$module" "target:0,new:0,using:0,failed:0,skipped:0,duration:0,reason:empty"
         return 0
     fi
     
+    # 计算目标安装总数
+    local total_packages=($(grep -E "^(brew|cask) " "$brewfile" | sed 's/^[^ ]* "//' | sed 's/".*//' | sort))
+    local target_count=${#total_packages[@]}
+    
+    info "模块包含 $target_count 个软件包，开始安装..."
+    
     # 检查磁盘空间
     local available_gb=$(df -g / | tail -1 | awk '{print $4}')
-    local stats=($(get_module_stats "$brewfile"))
-    local total_packages=$((${stats[0]} + ${stats[1]}))
-    local required_gb=$((total_packages / 20 + 1))  # 粗略估算：每20个包需要1GB
+    local required_gb=$((target_count / 20 + 1))
     
     if [[ $available_gb -lt $required_gb ]]; then
         warning "磁盘空间可能不足以安装模块 $module"
@@ -255,60 +385,179 @@ install_module() {
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             SKIPPED_MODULES+=("$module")
+            set_module_detail "$module" "target:$target_count,failed:$install_result,duration:$duration"
             return 0
         fi
     fi
     
-    # 预检查：验证 Brewfile 语法
-    info "验证模块文件语法..."
-    if ! brew bundle check --file="$brewfile" --dry-run >/dev/null 2>&1; then
-        warning "模块文件可能存在语法问题，但尝试继续安装"
-    fi
-    
     # 执行安装
     local start_time=$(date +%s)
-    local install_log="/tmp/brew_install_${module}_$.log"
+    local install_log="/tmp/brew_install_${module}_$$.log"
     
-    info "开始安装模块 $module..."
-    info "安装日志: $install_log"
+    # 获取安装前的包列表
+    local before_brews=($(brew list --formula 2>/dev/null | sort))
+    local before_casks=($(brew list --cask 2>/dev/null | sort))
     
-    # 使用 tee 同时输出到终端和日志文件
-    if safe_command 1800 1 brew bundle install --file="$brewfile" 2>&1 | tee "$install_log"; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        success "模块 $module 安装完成 (用时: $((duration / 60))分钟)"
-        INSTALLED_MODULES+=("$module")
-        
-        # 验证安装结果
-        info "验证安装结果..."
-        local failed_packages=($(grep -E "^Error:|^Warning:" "$install_log" | wc -l | tr -d ' '))
-        if [[ $failed_packages -gt 0 ]]; then
-            warning "安装过程中有 $failed_packages 个警告或错误，请检查日志"
+    info "开始安装模块: $module"
+    
+    # 执行安装并正确处理返回值
+    set +e  # 临时关闭 errexit，手动处理错误
+    safe_command 1800 1 brew bundle install --file="$brewfile" 2>&1 | tee "$install_log"
+    local install_result=${PIPESTATUS[0]}  # 获取 safe_command 的真实退出码
+    set -e  # 重新启用 errexit
+    
+    local end_time=$(date +%s)
+    local duration=$((end_time - start_time))
+    
+    # 解析安装日志，分析各种状态
+    local newly_installed=()
+    local already_using=()
+    local failed_packages=()
+    local skipped_packages=()
+    local skipped_reasons=()
+    
+    while IFS= read -r line; do
+        # 新安装的包
+        if [[ "$line" =~ ^Installing[[:space:]]+([^[:space:]]+) ]]; then
+            local pkg_name=$(echo "$line" | sed -n 's/Installing \([^[:space:]]*\).*/\1/p')
+            if [[ -n "$pkg_name" ]]; then
+                newly_installed+=("$pkg_name")
+            fi
+        # 已存在的包
+        elif [[ "$line" == Using[[:space:]]* ]]; then
+            local pkg_name=$(echo "$line" | awk '{print $2}')
+            if [[ -n "$pkg_name" ]]; then
+                already_using+=("$pkg_name")
+            fi
+        # 跳过的包及原因（简化版本）
+        elif [[ "$line" == Skipping[[:space:]]* ]]; then
+            local pkg_name=$(echo "$line" | awk '{print $2}')
+            if [[ -n "$pkg_name" ]]; then
+                skipped_packages+=("$pkg_name")
+                
+                # 提取跳过原因（如果有括号）
+                if [[ "$line" == *"("* && "$line" == *")"* ]]; then
+                    local reason=$(echo "$line" | sed -n 's/.*(\([^)]*\)).*/\1/p')
+                    skipped_reasons+=("$pkg_name:$reason")
+                else
+                    skipped_reasons+=("$pkg_name:未知原因")
+                fi
+            fi
+        # 安装失败的包
+        elif [[ "$line" == *"Installing"*"has failed"* ]]; then
+            local pkg_name=$(echo "$line" | sed -n 's/Installing \([^[:space:]]*\) has failed.*/\1/p')
+            if [[ -n "$pkg_name" ]]; then
+                failed_packages+=("$pkg_name")
+            fi
+        elif [[ "$line" == *"No available formula with the name"* ]]; then
+            local pkg_name=$(echo "$line" | sed -n 's/.*with the name "\([^"]*\)".*/\1/p')
+            if [[ -n "$pkg_name" ]]; then
+                failed_packages+=("$pkg_name")
+            fi
+        fi
+    done < "$install_log"
+    
+    # 去重数组
+    if [[ ${#newly_installed[@]} -gt 0 ]]; then
+        newly_installed=($(printf '%s\n' "${newly_installed[@]}" | sort -u))
+    fi
+    if [[ ${#already_using[@]} -gt 0 ]]; then
+        already_using=($(printf '%s\n' "${already_using[@]}" | sort -u))
+    fi
+    if [[ ${#failed_packages[@]} -gt 0 ]]; then
+        failed_packages=($(printf '%s\n' "${failed_packages[@]}" | sort -u))
+    fi
+    if [[ ${#skipped_packages[@]} -gt 0 ]]; then
+        skipped_packages=($(printf '%s\n' "${skipped_packages[@]}" | sort -u))
+    fi
+    
+    local new_count=${#newly_installed[@]}
+    local using_count=${#already_using[@]}
+    local failed_count=${#failed_packages[@]}
+    local skip_count=${#skipped_packages[@]}
+    
+    # 记录详细统计信息
+    if [[ ${#newly_installed[@]} -gt 0 ]]; then
+        add_success_package "$module" "${newly_installed[*]}"
+    fi
+    if [[ ${#failed_packages[@]} -gt 0 ]]; then
+        add_failed_package "$module" "${failed_packages[*]}"
+    fi
+    if [[ ${#skipped_packages[@]} -gt 0 ]]; then
+        add_skipped_package "$module" "${skipped_packages[*]}"
+        add_skipped_reasons "$module" "${skipped_reasons[*]}"
+    fi
+    
+    # 设置模块详细信息（扩展格式）
+    set_module_detail "$module" "target:$target_count,new:$new_count,using:$using_count,failed:$failed_count,skipped:$skip_count,duration:$duration"
+    
+    # 判断安装结果并显示详细信息
+    if [[ $install_result -eq 0 ]]; then
+        local status_msg="$new_count 个新安装, $using_count 个已安装"
+        if [[ $skip_count -gt 0 ]]; then
+            status_msg="$status_msg, $skip_count 个跳过"
+        fi
+        if [[ $failed_count -gt 0 ]]; then
+            status_msg="$status_msg, $failed_count 个失败"
         fi
         
-        # 清理日志文件（如果安装成功）
-        rm -f "$install_log"
+        if [[ $failed_count -eq 0 ]]; then
+            success "模块 $module 安装完成 ($status_msg, 共 $target_count 个, 用时: $((duration / 60))分钟)"
+            INSTALLED_MODULES+=("$module")
+        else
+            warning "模块 $module 部分安装完成 ($status_msg, 共 $target_count 个, 用时: $((duration / 60))分钟)"
+            if [[ ${#failed_packages[@]} -gt 0 ]]; then
+                info "失败的包: ${failed_packages[*]}"
+            fi
+            INSTALLED_MODULES+=("$module")  # 部分成功也算安装了
+        fi
+        
+        # 显示详细列表
+        if [[ $new_count -gt 0 && $new_count -le 10 ]]; then
+            info "新安装: ${newly_installed[*]}"
+        elif [[ $new_count -gt 10 ]]; then
+            info "新安装: ${newly_installed[@]:0:5} ... (还有 $((new_count - 5)) 个)"
+        fi
+        
+        # 显示跳过的包及原因
+        if [[ $skip_count -gt 0 ]]; then
+            info "跳过的包:"
+            for reason_pair in "${skipped_reasons[@]}"; do
+                local pkg="${reason_pair%:*}"
+                local reason="${reason_pair#*:}"
+                echo "  • $pkg - $reason"
+            done
+        fi
+        
+        # 清理日志文件（如果完全成功）
+        if [[ $failed_count -eq 0 ]]; then
+            rm -f "$install_log"
+        fi
         return 0
     else
-        local exit_code=$?
-        error "模块 $module 安装失败 (退出码: $exit_code)"
+        error "模块 $module 安装失败 (退出码: $install_result, 用时: $((duration / 60))分钟)"
         FAILED_MODULES+=("$module")
+        set_module_detail "$module" "target:$target_count,failed:$install_result,duration:$duration"
         
         # 显示故障排除信息
         echo
         error "安装失败详情 (查看日志: $install_log):"
         tail -10 "$install_log" 2>/dev/null || echo "无法读取日志文件"
         
-        echo
-        info "故障排除建议:"
-        echo "  1. 检查网络连接: ping github.com"
-        echo "  2. 检查 Homebrew 状态: brew doctor"
-        echo "  3. 更新 Homebrew: brew update"
-        echo "  4. 清理缓存: brew cleanup"
-        echo "  5. 查看完整日志: cat $install_log"
-        
         return 1
     fi
+}
+
+# 模块安装优先级排序（使用 case 语句替代关联数组）
+get_module_priority() {
+    local module="$1"
+    case "$module" in
+        "fonts") echo "1" ;;
+        "essential") echo "2" ;;
+        "development") echo "3" ;;
+        "optional") echo "4" ;;
+        *) echo "99" ;;
+    esac
 }
 
 # 模块安装优先级排序
@@ -316,27 +565,19 @@ sort_modules_by_priority() {
     local input_modules=("$@")
     local sorted_modules=()
     
-    # 定义安装优先级（数字越小优先级越高）
-    declare -A priority_map=(
-        ["fonts"]=1
-        ["essential"]=2
-        ["development"]=3
-        ["optional"]=4
-    )
-    
     # 创建带优先级的临时数组
     local modules_with_priority=()
     for module in "${input_modules[@]}"; do
-        local priority=${priority_map[$module]:-99}  # 未定义的模块优先级设为99
+        local priority=$(get_module_priority "$module")
         modules_with_priority+=("$priority:$module")
     done
     
     # 排序并提取模块名
-    IFS=$'\n' sorted_with_priority=($(sort -n <<< "${modules_with_priority[*]}"))
+    IFS=$'\n' sorted_with_priority=($(printf '%s\n' "${modules_with_priority[@]}" | sort -n))
     unset IFS
     
     for item in "${sorted_with_priority[@]}"; do
-        sorted_modules+=("${item#*:}")  # 移除优先级前缀
+        sorted_modules+=("${item#*:}")  # 提取冒号后的模块名
     done
     
     echo "${sorted_modules[@]}"
@@ -362,9 +603,9 @@ get_profile_modules() {
             modules=("essential" "development")
             ;;
         "full")
-            # 获取所有可用模块并按优先级排序
-            local all_available=($(get_available_modules))
-            modules=($(sort_modules_by_priority "${all_available[@]}"))
+            # 🔧 关键修改：获取所有模块并按优先级排序，包括空模块
+            local all_modules=($(get_all_modules))
+            modules=($(sort_modules_by_priority "${all_modules[@]}"))
             ;;
         *)
             error "未知方案: $profile"
@@ -1086,391 +1327,148 @@ update_homebrew() {
     fi
 }
 
-# 安装单个模块（带完整错误处理）
-install_module() {
-    local module="$1"
-    local brewfile="$HOMEBREW_DIR/Brewfile.$module"
+# 添加详细的安装结果统计函数
+show_detailed_install_summary() {
+    local total_duration="$1"
     
-    header "安装模块: $module"
-    show_module_info "$module"
+    header "详细安装结果统计"
     
-    if is_module_empty "$brewfile"; then
-        warning "模块 $module 为空，跳过安装"
-        SKIPPED_MODULES+=("$module")
-        return 0
-    fi
+    local total_new_packages=0
+    local total_existing_packages=0
+    local total_failed_packages=0
+    local total_skipped_packages=0
+    local total_target_packages=0
+    local total_modules_attempted=$((${#INSTALLED_MODULES[@]} + ${#FAILED_MODULES[@]}))
     
-    # 检查磁盘空间
-    local available_gb=$(df -g / | tail -1 | awk '{print $4}')
-    local stats=($(get_module_stats "$brewfile"))
-    local total_packages=$((${stats[0]} + ${stats[1]}))
-    local required_gb=$((total_packages / 20 + 1))  # 粗略估算：每20个包需要1GB
-    
-    if [[ $available_gb -lt $required_gb ]]; then
-        warning "磁盘空间可能不足以安装模块 $module"
-        info "可用: ${available_gb}GB, 预计需要: ${required_gb}GB"
-        
-        read -p "是否继续安装此模块? (y/N): " -n 1 -r
+    # 成功安装的模块
+    if [[ ${#INSTALLED_MODULES[@]} -gt 0 ]]; then
         echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            SKIPPED_MODULES+=("$module")
-            return 0
-        fi
-    fi
-    
-    # 执行安装
-    local start_time=$(date +%s)
-    local install_log="/tmp/brew_install_${module}_$$.log"
-    
-    info "开始安装模块 $module..."
-    
-    # 使用 tee 同时输出到终端和日志文件
-    if safe_command 1800 1 brew bundle install --file="$brewfile" 2>&1 | tee "$install_log"; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        success "模块 $module 安装完成 (用时: $((duration / 60))分钟)"
-        INSTALLED_MODULES+=("$module")
+        success "成功安装 ${#INSTALLED_MODULES[@]} 个模块:"
         
-        # 清理日志文件（如果安装成功）
-        rm -f "$install_log"
-        return 0
-    else
-        local exit_code=$?
-        error "模块 $module 安装失败 (退出码: $exit_code)"
-        FAILED_MODULES+=("$module")
-        
-        # 显示故障排除信息
-        echo
-        error "安装失败详情 (查看日志: $install_log):"
-        tail -10 "$install_log" 2>/dev/null || echo "无法读取日志文件"
-        
-        return 1
-    fi
-}
-
-# 批量安装模块
-install_modules() {
-    local requested_modules=("$@")
-    
-    # 验证模块
-    local valid_modules=()
-    for module in "${requested_modules[@]}"; do
-        local brewfile="$HOMEBREW_DIR/Brewfile.$module"
-        if [[ ! -f "$brewfile" ]]; then
-            error "模块文件不存在: Brewfile.$module"
-            return 1
-        elif ! is_module_empty "$brewfile"; then
-            valid_modules+=("$module")
-        else
-            SKIPPED_MODULES+=("$module")
-        fi
-    done
-    
-    if [[ ${#valid_modules[@]} -eq 0 ]]; then
-        warning "没有有效的模块需要安装"
-        return 0
-    fi
-    
-    # 显示安装计划
-    header "安装计划"
-    info "将安装以下模块:"
-    
-    local total_packages=0
-    
-    for module in "${valid_modules[@]}"; do
-        local brewfile="$HOMEBREW_DIR/Brewfile.$module"
-        local stats=($(get_module_stats "$brewfile"))
-        local count=$((${stats[0]} + ${stats[1]}))
-        total_packages=$((total_packages + count))
-        
-        echo -e "  ${CYAN}$module${NC}"
-        show_module_info "$module"
-    done
-    
-    if [[ ${#SKIPPED_MODULES[@]} -gt 0 ]]; then
-        warning "跳过的空模块: ${SKIPPED_MODULES[*]}"
-    fi
-    
-    echo
-    info "总计: ${#valid_modules[@]} 个模块，约 $total_packages 个软件包"
-    
-    # 最终确认
-    echo
-    read -p "是否继续安装? (Y/n): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
-        info "安装已取消"
-        return 0
-    fi
-    
-    # 执行安装
-    local start_time=$(date +%s)
-    
-    for i in "${!valid_modules[@]}"; do
-        local module="${valid_modules[$i]}"
-        local progress="$((i+1))/${#valid_modules[@]}"
-        
-        info "安装进度: $progress - $module"
-        
-        if ! install_module "$module"; then
-            # 询问是否继续
-            if [[ $((${#valid_modules[@]} - i - 1)) -gt 0 ]]; then
-                echo
-                warning "模块 $module 安装失败"
-                read -p "是否继续安装其余 $((${#valid_modules[@]} - i - 1)) 个模块? (Y/n): " -n 1 -r
-                echo
-                if [[ $REPLY =~ ^[Nn]$ ]]; then
-                    warning "用户选择中止安装"
-                    break
+        for module in "${INSTALLED_MODULES[@]}"; do
+            local details=$(get_module_detail "$module")
+            
+            # 解析详细信息
+            local target_count=$(echo "$details" | sed -n 's/.*target:\([0-9]*\).*/\1/p')
+            local new_count=$(echo "$details" | sed -n 's/.*new:\([0-9]*\).*/\1/p')
+            local using_count=$(echo "$details" | sed -n 's/.*using:\([0-9]*\).*/\1/p')
+            local failed_count=$(echo "$details" | sed -n 's/.*failed:\([0-9]*\).*/\1/p')
+            local skipped_count=$(echo "$details" | sed -n 's/.*skipped:\([0-9]*\).*/\1/p')
+            local duration=$(echo "$details" | sed -n 's/.*duration:\([0-9]*\).*/\1/p')
+            
+            # 默认值处理
+            target_count=${target_count:-0}
+            new_count=${new_count:-0}
+            using_count=${using_count:-0}
+            failed_count=${failed_count:-0}
+            skipped_count=${skipped_count:-0}
+            duration=${duration:-0}
+            
+            # 累计统计
+            total_target_packages=$((total_target_packages + target_count))
+            total_new_packages=$((total_new_packages + new_count))
+            total_existing_packages=$((total_existing_packages + using_count))
+            total_failed_packages=$((total_failed_packages + failed_count))
+            total_skipped_packages=$((total_skipped_packages + skipped_count))
+            
+            # 📍 关键修改：目标数量放在模块名后面，"已存在"改为"已安装"
+            echo -e "  ✅ ${CYAN}$module${NC} ${PURPLE}(目标: $target_count 个)${NC}"
+            echo "     新安装: $new_count 个, 已安装: $using_count 个, 跳过: $skipped_count 个, 失败: $failed_count 个, 用时: $((duration / 60))分钟"
+            
+            # 显示详细的软件包信息
+            if [[ $new_count -gt 0 ]]; then
+                local success_packages=$(get_success_packages "$module")
+                if [[ -n "$success_packages" ]]; then
+                    echo -e "     ${GREEN}新安装: $success_packages${NC}"
                 fi
             fi
-        fi
-    done
-    
-    local end_time=$(date +%s)
-    local total_duration=$((end_time - start_time))
-    
-    # 显示最终结果
-    echo
-    header "安装结果总结"
-    
-    if [[ ${#INSTALLED_MODULES[@]} -gt 0 ]]; then
-        success "成功安装 ${#INSTALLED_MODULES[@]} 个模块:"
-        printf '  ✅ %s\n' "${INSTALLED_MODULES[@]}"
-    fi
-    
-    if [[ ${#FAILED_MODULES[@]} -gt 0 ]]; then
-        error "安装失败 ${#FAILED_MODULES[@]} 个模块:"
-        printf '  ❌ %s\n' "${FAILED_MODULES[@]}"
-    fi
-    
-    if [[ ${#SKIPPED_MODULES[@]} -gt 0 ]]; then
-        warning "跳过 ${#SKIPPED_MODULES[@]} 个空模块:"
-        printf '  ⏭️ %s\n' "${SKIPPED_MODULES[@]}"
-    fi
-    
-    echo
-    info "总用时: $((total_duration / 60))分钟 $((total_duration % 60))秒"
-    
-    if [[ ${#FAILED_MODULES[@]} -gt 0 ]]; then
-        return 1
-    fi
-    
-    return 0
-}
-
-# 交互式安装向导
-interactive_setup() {
-    header "Homebrew 安装向导"
-    echo
-    
-    # 环境检测
-    if [[ -n "$SSH_CLIENT" ]] || [[ -n "$SSH_TTY" ]]; then
-        info "🖥️  检测到远程连接（服务器环境）"
-        echo
-        echo "服务器环境推荐方案:"
-        echo "  server - essential + development"
-        echo
-        read -p "是否使用服务器推荐配置? (Y/n): " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-            local modules=($(get_profile_modules "server"))
-            install_modules "${modules[@]}"
-            return
-        fi
-    else
-        info "💻 检测到本地环境"
-    fi
-    
-    # 主菜单
-    while true; do
-        echo
-        echo "请选择安装方案:"
-        echo "  1) minimal   - 基础工具包"
-        echo "  2) developer - 开发环境"
-        echo "  3) server    - 服务器环境"
-        echo "  4) full      - 完整环境"
-        echo "  5) custom    - 自定义选择模块"
-        echo "  6) quit      - 退出向导"
-        echo
-        
-        read -p "请选择 (1-6): " -n 1 -r choice
-        echo
-        
-        case $choice in
-            1)
-                local modules=($(get_profile_modules "minimal"))
-                install_modules "${modules[@]}"
-                break
-                ;;
-            2)
-                local modules=($(get_profile_modules "developer"))
-                install_modules "${modules[@]}"
-                break
-                ;;
-            3)
-                local modules=($(get_profile_modules "server"))
-                install_modules "${modules[@]}"
-                break
-                ;;
-            4)
-                local modules=($(get_profile_modules "full"))
-                install_modules "${modules[@]}"
-                break
-                ;;
-            5)
-                echo "可用模块:"
-                local available_modules=($(get_available_modules))
-                for i in "${!available_modules[@]}"; do
-                    echo "  $((i+1))) ${available_modules[$i]}"
-                done
-                echo
-                read -p "请输入要安装的模块编号 (空格分隔): " -a selected_indices
-                
-                local selected_modules=()
-                for index in "${selected_indices[@]}"; do
-                    if [[ "$index" =~ ^[0-9]+$ ]] && [[ $index -ge 1 ]] && [[ $index -le ${#available_modules[@]} ]]; then
-                        selected_modules+=("${available_modules[$((index-1))]}")
+            
+            # 🔧 新增：显示跳过的包
+            if [[ $skipped_count -gt 0 ]]; then
+                local skipped_packages=$(get_skipped_packages "$module")
+                local skipped_reasons=$(get_skipped_reasons "$module")
+                if [[ -n "$skipped_packages" ]]; then
+                    echo -e "     ${YELLOW}跳过: $skipped_packages${NC}"
+                    if [[ -n "$skipped_reasons" ]]; then
+                        echo -e "     ${YELLOW}原因: $skipped_reasons${NC}"
                     fi
-                done
-                
-                if [[ ${#selected_modules[@]} -gt 0 ]]; then
-                    install_modules "${selected_modules[@]}"
-                else
-                    warning "未选择有效模块"
                 fi
-                break
-                ;;
-            6)
-                info "退出安装向导"
-                return 0
-                ;;
-            *)
-                warning "无效选择 '$choice'，请重新选择"
-                ;;
-        esac
-    done
-}
-
-# 清理安装环境
-cleanup_environment() {
-    info "清理安装缓存和临时文件..."
-    
-    # 清理 Homebrew 缓存
-    if brew cleanup 2>/dev/null; then
-        success "Homebrew 缓存清理完成"
-    else
-        warning "缓存清理过程中出现警告，但不影响使用"
+            fi
+            
+            if [[ $failed_count -gt 0 ]]; then
+                local failed_packages=$(get_failed_packages "$module")
+                if [[ -n "$failed_packages" ]]; then
+                    echo -e "     ${RED}失败: $failed_packages${NC}"
+                fi
+            fi
+        done
     fi
     
-    # 清理临时文件
-    local temp_files=($(find /tmp -name "brew_install_*_$$.log" 2>/dev/null))
-    if [[ ${#temp_files[@]} -gt 0 ]]; then
-        rm -f "${temp_files[@]}"
-        info "清理了 ${#temp_files[@]} 个临时日志文件"
-    fi
-}
-
-# 显示完成信息
-show_completion_info() {
-    header "🎉 Homebrew 环境设置完成！"
-    echo
-    
-    # 安装统计
-    local cli_count=$(brew list --formula 2>/dev/null | wc -l | tr -d ' ')
-    local gui_count=$(brew list --cask 2>/dev/null | wc -l | tr -d ' ')
-    
-    info "安装统计:"
-    echo "  CLI 工具: $cli_count 个"
-    echo "  GUI 应用: $gui_count 个"
-    
-    if [[ ${#INSTALLED_MODULES[@]} -gt 0 ]]; then
-        echo "  安装的模块: ${INSTALLED_MODULES[*]}"
-    fi
-    
-    echo
-    info "后续步骤:"
-    echo "  1. 重启终端或运行: source ~/.zshrc"
-    echo "  2. 验证安装: brew doctor"
-    echo "  3. 查看已安装软件: brew list"
-    
-    if [[ -f "$HOMEBREW_DIR/brew-functions.zsh" ]]; then
-        echo "  4. 加载管理函数: source $HOMEBREW_DIR/brew-functions.zsh"
-        echo "  5. 检查环境状态: brew-init"
-    fi
-}
-
-# 显示帮助信息
-show_help() {
-    cat << EOF
-🍺 Homebrew 环境设置脚本 v${SCRIPT_VERSION}
-
-用法:
-  $0 [选项] [模块...]
-
-选项:
-  -h, --help              显示此帮助信息
-  -i, --interactive       启动交互式安装向导 (推荐)
-  -p, --profile <名称>    使用预定义安装方案
-  -l, --list              列出可用模块和方案
-  -u, --update-only       仅更新 Homebrew，不安装软件
-  -y, --yes               对所有询问自动回答 yes
-  --no-cleanup            跳过安装后清理步骤
-  --dry-run               显示将要执行的操作，但不实际安装
-
-模块:
-  essential               基础必备工具
-  development             开发环境工具
-  fonts                   编程字体
-  optional                可选工具
-
-预定义方案:
-  minimal                 仅基础工具 (essential)
-  developer               开发环境 (essential + development + fonts)
-  server                  服务器环境 (essential + development)
-  full                    完整环境 (所有非空模块)
-
-示例:
-  $0 --interactive                    # 交互式安装 (推荐新用户)
-  $0 --profile developer              # 使用开发者方案
-  $0 essential development fonts      # 安装指定模块
-  $0 --list                          # 查看所有选项
-
-EOF
-}
-
-# 显示版本信息
-show_version() {
-    echo "Homebrew 环境设置脚本 v${SCRIPT_VERSION}"
-    echo "支持的 macOS 版本: $MIN_MACOS_VERSION+"
-}
-
-# 列出可用选项
-show_list() {
-    header "可用模块"
-    echo
-    
-    local available_modules=($(get_available_modules))
-    if [[ ${#available_modules[@]} -eq 0 ]]; then
-        warning "没有找到可用的模块"
-        return 1
-    fi
-    
-    for module in "${available_modules[@]}"; do
-        show_module_preview "$module"
-    done
-    
-    echo
-    header "预定义方案"
-    echo
-    
-    local profiles=("minimal" "developer" "server" "full")
-    for profile in "${profiles[@]}"; do
-        echo -e "${CYAN}$profile${NC}:"
-        local modules=($(get_profile_modules "$profile"))
-        echo "  模块: ${modules[*]}"
+    # 完全失败的模块
+    if [[ ${#FAILED_MODULES[@]} -gt 0 ]]; then
         echo
-    done
+        error "安装失败 ${#FAILED_MODULES[@]} 个模块:"
+        
+        for module in "${FAILED_MODULES[@]}"; do
+            local details=$(get_module_detail "$module")
+            local target_count=$(echo "$details" | sed -n 's/.*target:\([0-9]*\).*/\1/p')
+            local exit_code=$(echo "$details" | sed -n 's/.*failed:\([0-9]*\).*/\1/p')
+            local duration=$(echo "$details" | sed -n 's/.*duration:\([0-9]*\).*/\1/p')
+            
+            target_count=${target_count:-0}
+            total_target_packages=$((total_target_packages + target_count))
+            
+            echo -e "  ❌ ${RED}$module${NC} ${PURPLE}(目标: $target_count 个)${NC}"
+            echo "     错误码: $exit_code, 用时: $((duration / 60))分钟"
+            echo "     日志: /tmp/brew_install_${module}_$$.log"
+        done
+    fi
+    
+    # 跳过的模块
+    if [[ ${#SKIPPED_MODULES[@]} -gt 0 ]]; then
+        echo
+        warning "跳过 ${#SKIPPED_MODULES[@]} 个模块:"
+        
+        for module in "${SKIPPED_MODULES[@]}"; do
+            local details=$(get_module_detail "$module")
+            local target_count=$(echo "$details" | sed -n 's/.*target:\([0-9]*\).*/\1/p')
+            local reason="${details#*:}"
+            reason="${reason%%,*}"  # 取第一个字段作为原因
+            
+            target_count=${target_count:-0}
+            total_target_packages=$((total_target_packages + target_count))
+            
+            case "$reason" in
+                "empty")
+                    echo -e "  ⏭️  ${YELLOW}$module${NC} ${PURPLE}(目标: $target_count 个)${NC} - 模块为空"
+                    ;;
+                "disk_space")
+                    echo -e "  ⏭️  ${YELLOW}$module${NC} ${PURPLE}(目标: $target_count 个)${NC} - 磁盘空间不足"
+                    ;;
+                *)
+                    echo -e "  ⏭️  ${YELLOW}$module${NC} ${PURPLE}(目标: $target_count 个)${NC} - $reason"
+                    ;;
+            esac
+        done
+    fi
+    
+    # 总体统计
+    echo
+    header "总体统计"
+    echo "  模块统计: $total_modules_attempted 个尝试, ${#INSTALLED_MODULES[@]} 个成功, ${#FAILED_MODULES[@]} 个失败, ${#SKIPPED_MODULES[@]} 个跳过"
+    echo "  软件包统计: 目标 $total_target_packages 个, 新安装 $total_new_packages 个, 已安装 $total_existing_packages 个, 失败 $total_failed_packages 个"
+    echo "  总用时: $((total_duration / 60))分钟 $((total_duration % 60))秒"
+    
+    # 安装效率分析
+    if [[ $total_modules_attempted -gt 0 ]]; then
+        local success_rate=$(( (${#INSTALLED_MODULES[@]} * 100) / total_modules_attempted ))
+        echo "  模块成功率: $success_rate%"
+    fi
+    
+    if [[ $total_target_packages -gt 0 ]]; then
+        local package_success_rate=$(( ((total_new_packages + total_existing_packages) * 100) / total_target_packages ))
+        echo "  软件包完成率: $package_success_rate%"
+    fi
 }
 
 # ==============================================================================
