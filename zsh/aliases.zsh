@@ -150,5 +150,12 @@ alias ip='myip'                     # 查看IP地址（覆盖原有的myip别名
 alias gitproxy='git config --global http.proxy && git config --global https.proxy'  # 查看Git代理设置
 alias gitproxyoff='git config --global --unset http.proxy && git config --global --unset https.proxy'  # 单独关闭Git代理
 
+# Git 增强函数别名
+alias gcp='gitcp'                   # Git commit and push 增强版
+alias gcof='gitco'                  # Git checkout 增强版（显示分支列表）
+alias glg='gitlog'                  # Git log 美化版
+alias wt='getweather'               # 天气查询增强版
+alias port='checkport'              # 端口检查功能
+
 # 在这里添加你的个人别名
 # alias myalias='your command here'

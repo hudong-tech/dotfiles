@@ -89,7 +89,7 @@ load_zsh_config "$DOTFILES/zsh/aliases.zsh"
 load_zsh_config "$DOTFILES/zsh/functions.zsh"
 
 # 加载本地个人配置（不被版本控制）
-load_zsh_config "$HOME/.extra"
+[[ -f "$HOME/.extra" ]] && load_zsh_config "$HOME/.extra"
 
 # ------------------------------------------------------------------------------
 # 5. 历史记录配置
