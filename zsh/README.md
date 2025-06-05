@@ -10,7 +10,8 @@ zsh/
 ├── aliases.zsh # 命令别名配置
 ├── exports.zsh # 环境变量和代理设置
 ├── functions.zsh # 自定义 Shell 函数
-└── path.zsh # PATH 路径管理
+├── path.zsh # PATH 路径管理
+└── p10k.zsh # Powerlevel10k 主题配置（终端提示符美化）
 ``` 
 
 ## 🚀 主配置文件 (.zshrc)
@@ -426,5 +427,68 @@ MIT License - 详见根目录 [LICENSE](../LICENSE) 文件
 **Happy Coding!** 🎉
 
 > 这个配置方案经过精心设计和测试，旨在提供高效、稳定的开发环境。如有问题或建议，欢迎提交 Issue！
+
+### 🎨 终端美化
+
+- **Powerlevel10k**：现代化的 Zsh 主题，提供快速、美观的提示符
+  - **Lean 风格**：简洁的单行提示符设计
+  - **智能显示**：根据项目类型动态显示相关信息
+  - **Git 集成**：详细的版本控制状态指示
+  - **开发工具支持**：Node.js、Python、Go、Docker 等环境信息
+  - **性能优化**：使用 gitstatus 插件提供毫秒级响应
+- **iTerm2**：Dracula 主题配置
+- **颜色方案**：统一的终端配色体验
+
+#### Powerlevel10k 配置详解
+
+`zsh/p10k.zsh` 提供了完整的主题配置：
+
+**左侧提示符元素**：
+- `dir`: 当前目录（智能缩短，支持锚点文件）
+- `vcs`: Git 状态（分支、提交状态、文件变更）
+- `prompt_char`: 提示符（成功/失败状态颜色）
+
+**右侧提示符元素**：
+- `status`: 命令退出状态
+- `command_execution_time`: 命令执行时间（>3秒显示）
+- `background_jobs`: 后台任务指示
+- `virtualenv/anaconda/pyenv`: Python 环境信息
+- `nvm/nodenv/node_version`: Node.js 版本信息
+- `kubecontext`: Kubernetes 集群上下文
+- `aws/azure/gcloud`: 云服务配置
+- `time`: 当前时间
+
+**智能功能**：
+- **项目识别**：根据 `package.json`、`go.mod`、`.git` 等文件自动显示相关信息
+- **环境检测**：自动识别虚拟环境、Docker 容器等
+- **性能优化**：异步加载，不影响终端响应速度
+- **自定义图标**：使用 Nerd Fonts 提供丰富的图标支持
+
+**个性化配置**：
+```bash
+# 重新配置主题（交互式向导）
+p10k configure
+
+# 编辑配置文件
+vim ~/dotfiles/zsh/p10k.zsh
+
+# 重新加载配置
+source ~/.zshrc
+```
+
+## 2. Git Commit 消息
+
+基于您提供的风格，以下是建议的 commit 消息：
+
+feat: 完善 Powerlevel10k 主题配置和 Zsh 模块化架构
+
+- 新增完整的 Powerlevel10k 配置文件 (zsh/p10k.zsh) 支持现代化终端体验
+- 优化 .zshrc 模块化加载机制，采用智能路径检测和安全加载函数
+- 集成 Oh My Zsh 插件生态 (语法高亮/智能建议/Git增强/Docker支持)
+- 配置 lean 风格单行提示符，支持 Git 状态和开发环境智能显示
+- 支持 20+ 开发工具检测 (Node.js/Python/Go/Docker/K8s/云服务)
+- 实现异步 Git 状态更新，提供毫秒级终端响应性能
+- 提供完整的历史记录和 Zsh 增强功能配置
+- 支持智能目录导航、命令补全和错误纠正机制
 
 
