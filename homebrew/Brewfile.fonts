@@ -1,0 +1,13 @@
+# ==============================================================================
+# Programming Fonts - 编程字体模块
+# 包含：各种编程友好的字体，支持连字、等宽等特性
+# 目标：提升代码阅读体验
+# ==============================================================================
+
+# 字体仓库
+tap "homebrew/cask-fonts"
+
+cask "font-fira-code"        # 支持连字的编程字体
+cask "font-jetbrains-mono"   # JetBrains 官方字体
+cask "font-source-code-pro"  # Adobe 开源编程字体
+cask "font-cascadia-code"    # Microsoft 编程字体
