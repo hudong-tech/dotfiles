@@ -1,0 +1,18 @@
+// VSCode 自定义快捷键配置
+// 🔗 双向绑定：此文件与 VSCode 的快捷键设置同步
+// 📝 格式说明：
+// {
+//     "key": "快捷键组合",
+//     "command": "执行的命令",
+//     "when": "生效条件(可选)"
+// }
+// 
+// 💡 常用示例：
+// {
+//     "key": "cmd+k cmd+c",
+//     "command": "editor.action.addCommentLine",
+//     "when": "editorTextFocus"
+// }
+[
+    // 在这里添加你的自定义快捷键
+]

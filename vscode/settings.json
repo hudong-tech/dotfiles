@@ -1,0 +1,46 @@
+{
+    // ===================================================================
+    // 📋 VSCode 用户设置配置文件
+    // ===================================================================
+    // 
+    // 🎯 文件作用：
+    //   • VSCode 编辑器的全局用户设置
+    //   • 控制编辑器行为、外观、功能等配置
+    //   • 通过 dotfiles 项目进行版本管理和跨设备同步
+    //
+    // 🔗 双向绑定：
+    //   • 此文件通过软链接绑定到 VSCode 配置目录
+    //   • 在 VSCode 设置界面的修改会实时同步到此文件
+    //   • 直接编辑此文件也会立即在 VSCode 中生效
+    //
+    // 📍 文件位置：
+    //   • dotfiles: ~/dotfiles/vscode/settings.json
+    //   • VSCode:   ~/Library/Application Support/Code/User/settings.json (macOS)
+    //
+    // 💡 使用建议：
+    //   • 优先在 VSCode 设置界面进行修改（更直观，有类型检查）
+    //   • 需要精确控制或批量修改时可以直接编辑此文件
+    //   • 添加注释来说明特殊配置的用途
+    //   • 定期整理和清理不需要的配置项
+    //
+    // 🔄 同步说明：
+    //   • 新环境：通过 dotfiles 安装脚本自动创建软链接
+    //   • 更新：Git 提交此文件的变更来跨设备同步配置
+    //
+    // ===================================================================
+
+    // 🔄 自动保存：当编辑器失去焦点时自动保存文件
+    "files.autoSave": "onFocusChange",
+    
+    // 🎨 颜色主题：使用 One Dark Pro 深色主题
+    "workbench.colorTheme": "One Dark Pro",
+    
+    // 📁 图标主题：使用 Material 图标主题
+    "workbench.iconTheme": "material-icon-theme",
+    
+    // 📏 缩进设置：Tab 键对应 2 个空格
+    "editor.tabSize": 2,
+    
+    // 🖥️ 外部终端：在 macOS 上使用 iTerm2 作为外部终端
+    "terminal.external.osxExec": "/Applications/iTerm 2.app"
+}
