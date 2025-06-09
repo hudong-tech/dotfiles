@@ -68,9 +68,10 @@ if [[ -d "$HOME/.oh-my-zsh" ]]; then
     # 加载 Oh My Zsh
     source $ZSH/oh-my-zsh.sh
     
-    echo "✅ Oh My Zsh 加载完成"
+    # 只在调试模式下显示
+    [[ -n "$DOTFILES_DEBUG" ]] && echo "✅ Oh My Zsh 加载完成"
 else
-    echo "⚠️  Oh My Zsh 未安装，使用基础 Zsh 配置"
+    [[ -n "$DOTFILES_DEBUG" ]] && echo "⚠️  Oh My Zsh 未安装，使用基础 Zsh 配置"
     # 基础 Zsh 配置（无 Oh My Zsh 时的备选方案）
     autoload -Uz compinit
     compinit
