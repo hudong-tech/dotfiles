@@ -159,3 +159,5 @@ alias port='checkport'              # 端口检查功能
 
 # 在这里添加你的个人别名
 # alias myalias='your command here'
+# 编辑器别名
+alias vi='vim'                     # 使用vim替代vi
