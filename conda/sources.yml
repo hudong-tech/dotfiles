@@ -1,0 +1,152 @@
+# ==============================================================================
+# Conda 镜像源配置文件
+# 支持多地区、多机构的镜像源配置
+# ==============================================================================
+
+# 官方源配置
+official:
+  name: "Anaconda 官方源"
+  description: "Anaconda 官方默认源，全球访问"
+  channels:
+    - defaults
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+
+# 中国镜像源配置
+china:
+  name: "中国镜像源集合"
+  description: "适合中国大陆用户，访问速度快"
+  channels:
+    # 阿里云镜像（商业级稳定性）
+    - https://mirrors.aliyun.com/anaconda/cloud/conda-forge/
+    - https://mirrors.aliyun.com/anaconda/pkgs/main/
+    - https://mirrors.aliyun.com/anaconda/pkgs/free/
+    - https://mirrors.aliyun.com/anaconda/pkgs/r/
+    # 清华大学镜像
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r/
+    # 北京外国语大学镜像
+    - https://mirrors.bfsu.edu.cn/anaconda/cloud/conda-forge/
+    - https://mirrors.bfsu.edu.cn/anaconda/pkgs/main/
+    - https://mirrors.bfsu.edu.cn/anaconda/pkgs/free/
+    # 上海交通大学镜像
+    - https://mirror.sjtu.edu.cn/anaconda/cloud/conda-forge/
+    - https://mirror.sjtu.edu.cn/anaconda/pkgs/main/
+    - https://mirror.sjtu.edu.cn/anaconda/pkgs/free/
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+    ssl_verify: true
+
+# 阿里云镜像
+aliyun:
+  name: "阿里云镜像"
+  description: "阿里云开源镜像站，商业级稳定性"
+  channels:
+    - https://mirrors.aliyun.com/anaconda/cloud/conda-forge/
+    - https://mirrors.aliyun.com/anaconda/pkgs/main/
+    - https://mirrors.aliyun.com/anaconda/pkgs/free/
+    - https://mirrors.aliyun.com/anaconda/pkgs/r/
+    - https://mirrors.aliyun.com/anaconda/pkgs/msys2/
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+
+# 清华大学镜像（单独配置）
+tsinghua:
+  name: "清华大学镜像"
+  description: "清华大学开源软件镜像站"
+  channels:
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2/
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+
+# 北京外国语大学镜像
+bfsu:
+  name: "北京外国语大学镜像"
+  description: "北外镜像站，教育网用户访问快"
+  channels:
+    - https://mirrors.bfsu.edu.cn/anaconda/cloud/conda-forge/
+    - https://mirrors.bfsu.edu.cn/anaconda/pkgs/main/
+    - https://mirrors.bfsu.edu.cn/anaconda/pkgs/free/
+    - https://mirrors.bfsu.edu.cn/anaconda/pkgs/r/
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+
+# 上海交通大学镜像
+sjtu:
+  name: "上海交通大学镜像"
+  description: "上海交大镜像站"
+  channels:
+    - https://mirror.sjtu.edu.cn/anaconda/cloud/conda-forge/
+    - https://mirror.sjtu.edu.cn/anaconda/pkgs/main/
+    - https://mirror.sjtu.edu.cn/anaconda/pkgs/free/
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+
+# conda-forge 社区源
+conda-forge:
+  name: "Conda-Forge 社区源"
+  description: "社区维护的高质量包源"
+  channels:
+    - conda-forge
+    - defaults
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+
+# 企业内部源示例（用户可自定义）
+enterprise:
+  name: "企业内部源"
+  description: "企业内部 Anaconda 镜像（示例配置）"
+  channels:
+    - http://internal-mirror.company.com/anaconda/pkgs/main/
+    - http://internal-mirror.company.com/anaconda/pkgs/free/
+    - conda-forge  # 备用公共源
+  config:
+    channel_priority: strict
+    show_channel_urls: true
+    ssl_verify: false  # 内部源可能使用自签名证书
+
+# 测试源配置
+test:
+  name: "测试源配置"
+  description: "用于测试的最小化源配置"
+  channels:
+    - defaults
+  config:
+    channel_priority: flexible
+    show_channel_urls: true
+
+# ==============================================================================
+# 源配置说明
+# ==============================================================================
+# 
+# 配置格式说明：
+# source_name:
+#   name: "显示名称"
+#   description: "源描述"
+#   channels: 
+#     - 源地址列表
+#   config:
+#     channel_priority: strict|flexible
+#     show_channel_urls: true|false
+#     ssl_verify: true|false
+#
+# 使用方法：
+#   conda_switch_source china      # 使用中国镜像源集合
+#   conda_switch_source tsinghua   # 使用清华镜像
+#   conda_switch_source official   # 使用官方源
+#
+# 自定义源：
+#   可以在此文件中添加新的源配置，然后使用 conda_switch_source 切换
