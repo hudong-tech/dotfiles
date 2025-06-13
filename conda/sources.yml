@@ -18,12 +18,12 @@ china:
   name: "中国镜像源集合"
   description: "适合中国大陆用户，访问速度快"
   channels:
-    # 阿里云镜像（商业级稳定性）
-    - https://mirrors.aliyun.com/anaconda/cloud/conda-forge/
-    - https://mirrors.aliyun.com/anaconda/pkgs/main/
-    - https://mirrors.aliyun.com/anaconda/pkgs/free/
-    - https://mirrors.aliyun.com/anaconda/pkgs/r/
-    # 清华大学镜像
+    # 中科大镜像（推荐指数：⭐⭐⭐⭐⭐）
+    - https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/
+    - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/
+    - https://mirrors.ustc.edu.cn/anaconda/pkgs/free/
+    - https://mirrors.ustc.edu.cn/anaconda/pkgs/r/
+    # 清华大学镜像（推荐指数：⭐⭐⭐⭐）
     - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
     - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
     - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/

@@ -7,15 +7,16 @@
 # 包源配置 (默认使用中国镜像源)
 # ------------------------------------------------------------------------------
 channels:
-  # 阿里云镜像（商业级稳定性，优先使用）
-  - https://mirrors.aliyun.com/anaconda/cloud/conda-forge/
-  - https://mirrors.aliyun.com/anaconda/pkgs/main/
-  - https://mirrors.aliyun.com/anaconda/pkgs/free/
-  - https://mirrors.aliyun.com/anaconda/pkgs/r/
-  # 清华大学镜像（备用）
+  # 中科大镜像（推荐指数：⭐⭐⭐⭐⭐，稳定、持续更新、速度快）
+  - https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/free/
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/r/
+  # 清华大学镜像（推荐指数：⭐⭐⭐⭐，速度快，更新稍慢于中科大）
   - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
   - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
   - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r/
   # conda-forge 官方（最新包支持）
   - conda-forge
   # 默认源（兜底）
