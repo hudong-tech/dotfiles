@@ -41,49 +41,125 @@ conda_create_python_env() {
 conda_create_from_template() {
     local template_name="$1"
     local custom_env_name="$2"
+    local python_version="$3"
     
     if [[ -z "$template_name" ]]; then
         echo "📋 可用模板:"
-        find "$DOTFILES/conda/environments" -name "*.yml" 2>/dev/null | \
+        find "$DOTFILES/conda/environments/templates" -name "*.yml" 2>/dev/null | \
             xargs -n1 basename | sed 's/.yml$//' | sort | \
             sed 's/^/  - /'
         echo ""
-        echo "💡 使用方法: conda_create_from_template <模板名> [环境名]"
+        echo "💡 使用方法: conda_create_from_template <模板名> [环境名] [Python版本]"
         return 1
     fi
     
-    local template_file="$DOTFILES/conda/environments/${template_name}.yml"
+    local template_file="$DOTFILES/conda/environments/templates/${template_name}.yml"
     if [[ ! -f "$template_file" ]]; then
         echo "❌ 模板不存在: $template_name"
         echo "📁 检查路径: $template_file"
         return 1
     fi
     
+    # 处理有自定义环境名的情况
     if [[ -n "$custom_env_name" ]]; then
         echo "📄 从模板 '$template_name' 创建环境 '$custom_env_name'"
-        # 创建临时文件，修改环境名
-        local temp_file=$(mktemp)
-        sed "s/^name: .*/name: $custom_env_name/" "$template_file" > "$temp_file"
+        
+        # 创建临时文件，修改环境名和 Python 版本
+        local temp_file=$(mktemp /tmp/conda_env.XXXXXX.yml)
+        
+        # 设置默认 Python 版本
+        if [[ -z "$python_version" ]]; then
+            python_version="3.10"
+        fi
+        
+        echo "🐍 使用 Python $python_version"
+        
+        # 同时替换环境名和 Python 版本占位符
+        sed -e "s/^name: .*/name: $custom_env_name/" \
+            -e "s/{{PYTHON_VERSION}}/$python_version/g" \
+            "$template_file" > "$temp_file"
+        
+        # 验证临时文件是否创建成功
+        if [[ ! -f "$temp_file" ]]; then
+            echo "❌ 无法创建临时文件"
+            return 1
+        fi
+        
+        echo "📄 临时配置文件: $temp_file"
         
         if conda env create -f "$temp_file"; then
             echo "✅ 环境 '$custom_env_name' 创建成功"
             echo "💡 激活环境: conda activate $custom_env_name"
         else
             echo "❌ 环境创建失败"
-            rm "$temp_file"
+            rm "$temp_file" 2>/dev/null
             return 1
         fi
-        rm "$temp_file"
+        rm "$temp_file" 2>/dev/null
+        
+    # 处理没有自定义环境名的情况
     else
         echo "📄 从模板 '$template_name' 创建环境"
-        local env_name=$(grep "^name:" "$template_file" | cut -d' ' -f2)
         
-        if conda env create -f "$template_file"; then
-            echo "✅ 环境 '$env_name' 创建成功"
-            echo "💡 激活环境: conda activate $env_name"
+        # 如果提供了 Python 版本参数（这时 $2 是 Python 版本）
+        if [[ -n "$2" ]]; then
+            python_version="$2"
+            echo "🐍 使用 Python $python_version"
+            
+            # 需要处理 Python 版本占位符
+            local temp_file=$(mktemp /tmp/conda_env.XXXXXX.yml)
+            sed "s/{{PYTHON_VERSION}}/$python_version/g" "$template_file" > "$temp_file"
+            
+            # 验证临时文件是否创建成功
+            if [[ ! -f "$temp_file" ]]; then
+                echo "❌ 无法创建临时文件"
+                return 1
+            fi
+            
+            local env_name=$(grep "^name:" "$temp_file" | cut -d' ' -f2)
+            echo "📄 临时配置文件: $temp_file"
+            
+            if conda env create -f "$temp_file"; then
+                echo "✅ 环境 '$env_name' 创建成功"
+                echo "💡 激活环境: conda activate $env_name"
+            else
+                echo "❌ 环境创建失败"
+                rm "$temp_file" 2>/dev/null
+                return 1
+            fi
+            rm "$temp_file" 2>/dev/null
+            
         else
-            echo "❌ 环境创建失败"
-            return 1
+            # 直接使用原模板文件（如果没有占位符的话）
+            local env_name=$(grep "^name:" "$template_file" | cut -d' ' -f2)
+            
+            # 检查是否包含 Python 版本占位符
+            if grep -q "{{PYTHON_VERSION}}" "$template_file"; then
+                echo "⚠️  模板包含 Python 版本占位符，使用默认版本 3.10"
+                python_version="3.10"
+                
+                local temp_file=$(mktemp /tmp/conda_env.XXXXXX.yml)
+                sed "s/{{PYTHON_VERSION}}/$python_version/g" "$template_file" > "$temp_file"
+                
+                if conda env create -f "$temp_file"; then
+                    echo "✅ 环境 '$env_name' 创建成功"
+                    echo "💡 激活环境: conda activate $env_name"
+                else
+                    echo "❌ 环境创建失败"
+                    rm "$temp_file" 2>/dev/null
+                    return 1
+                fi
+                rm "$temp_file" 2>/dev/null
+            else
+                # 模板没有占位符，直接使用
+                if conda env create -f "$template_file"; then
+                    echo "✅ 环境 '$env_name' 创建成功"
+                    echo "💡 激活环境: conda activate $env_name"
+                else
+                    echo "❌ 环境创建失败"
+                    return 1
+                fi
+            fi
         fi
     fi
 }
@@ -97,7 +173,7 @@ conda_create_from_template() {
 conda_save_as_template() {
     local template_name="${1:-$(basename $PWD)}"
     local current_env="${CONDA_DEFAULT_ENV:-base}"
-    local output_file="$DOTFILES/conda/environments/${template_name}.yml"
+    local output_file="$DOTFILES/conda/environments/templates/${template_name}.yml"
     
     echo "💾 将环境 '$current_env' 导出为模板 '$template_name'"
     echo "📁 保存位置: $output_file"

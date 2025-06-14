@@ -90,40 +90,109 @@ Conda增强模块是一套**完整的Python环境管理解决方案**，通过�
 
 ## ⚡ 快速开始
 
-### 💨 30秒体验
+### 💨 基础配置
 
 ```bash
-# 1️⃣ 查看环境状态
-conda_status
+# 1️⃣ 创建必要的目录
+mkdir -p ~/.conda/envs
+mkdir -p ~/.conda/pkgs
 
-# 2️⃣ 创建开发环境
-conda_create_from_template python-basic mydev 3.10
+# 2️⃣ 创建软链接
+ln -sf $DOTFILES/conda/condarc ~/.condarc
+ln -sf $DOTFILES/conda/sources.yml ~/.conda/sources.yml
 
-# 3️⃣ 激活并验证
-conda activate mydev
-python --version && pytest --version && black --version
+# 3️⃣ 在 ~/.zshrc 中添加配置
+# 在 "# >>> conda initialize >>>" 之前添加：
+source $DOTFILES/conda/functions.zsh
+source $DOTFILES/conda/aliases.zsh
+source $DOTFILES/conda/config.zsh
+
+# 4️⃣ 重新加载配置
+source ~/.zshrc
 ```
 
-### 🎯 常用命令清单
+### ✅ 验证配置
 
 ```bash
-# 🔧 环境管理
-conda_create_python_env myproject 3.11              # 快速创建基础环境
-conda_create_from_template <模板> <环境名> <版本>   # 从模板创建
-conda_save_as_template my-template                   # 保存当前环境为模板
+# 1️⃣ 检查目录结构
+ls -la ~/.conda
+# 成功标志：
+# - 存在 envs 和 pkgs 目录
+# - 目录权限为 drwxr-xr-x
+# - 所有者是当前用户
 
-# 📊 状态监控  
-conda_status                                         # 系统状态总览
-conda_env_size [环境名]                             # 环境占用分析
+# 2️⃣ 检查软链接
+ls -l ~/.condarc
+ls -l ~/.conda/sources.yml
+# 成功标志：
+# - 显示 lrwxr-xr-x 权限
+# - 正确指向 $DOTFILES/conda/ 下的对应文件
+# - 链接文件存在且可访问
 
-# 🌐 源管理
-conda_switch_source china                           # 切换到中国镜像源
-conda_test_connection                                # 测试网络连接
+# 3️⃣ 测试 conda 配置
+conda config --show
+# 成功标志：
+# - 显示完整的配置信息
+# - channels 包含配置的镜像源
+# - 其他配置项正确显示
 
-# 🧹 维护清理
-conda_cleanup                                        # 智能缓存清理
-conda_check_env [环境名]                            # 环境健康检查
+# 4️⃣ 验证源配置
+conda config --show channels
+# 成功标志：
+# - 显示配置的镜像源列表
+# - 源顺序正确
+# - 包含阿里云和清华源
+
+# 5️⃣ 测试网络连接
+conda search numpy
+# 成功标志：
+# - 能够正常搜索包
+# - 显示包信息
+# - 没有网络错误
 ```
+
+### 🧪 环境创建测试
+
+```bash
+# 1️⃣ 测试基础环境创建
+conda_create_python_env test-basic 3.10
+# 成功标志：
+# - 成功创建环境
+# - 安装指定Python版本
+# - 包含基础开发包
+
+# 2️⃣ 测试模板环境创建
+conda_create_from_template python-basic test-template 3.10
+# 成功标志：
+# - 从模板成功创建环境
+# - 自动安装开发工具（ruff、pre-commit、ipdb等）
+# - 通过pip requirements安装额外依赖
+
+# 3️⃣ 验证环境功能
+conda activate test-template
+python --version                    # 验证Python版本
+pip list                           # 查看安装的包
+conda deactivate
+
+# 4️⃣ 测试其他函数
+conda_check_env test-template      # 环境健康检查
+conda_status                       # 查看系统状态
+conda_cleanup                      # 清理缓存（可选）
+
+# 5️⃣ 清理测试环境（可选）
+conda remove --name test-basic --all
+conda remove --name test-template --all
+```
+
+### 🎯 配置说明
+
+| 配置项 | 说明 | 状态 |
+|--------|------|------|
+| 目录结构 | 创建必要的conda目录 | ✅ 已完成 |
+| 软链接 | 链接condarc和sources.yml | ✅ 已完成 |
+| Shell配置 | 加载conda模块配置 | ✅ 已完成 |
+| 环境模板 | 配置环境模板系统 | ✅ 已完成 |
+| 函数加载 | 加载增强函数 | ✅ 已完成 |
 
 ## 📋 函数清单
 
