@@ -89,6 +89,11 @@ load_zsh_config "$DOTFILES/zsh/aliases.zsh"
 # 加载自定义函数
 load_zsh_config "$DOTFILES/zsh/functions.zsh"
 
+# 加载 dirtree 模块
+if [[ -f "$HOME/dotfiles/dirtree/functions.zsh" ]]; then
+    source "$HOME/dotfiles/dirtree/functions.zsh"
+fi
+
 # 加载本地个人配置（不被版本控制）
 [[ -f "$HOME/.extra" ]] && load_zsh_config "$HOME/.extra"
 
