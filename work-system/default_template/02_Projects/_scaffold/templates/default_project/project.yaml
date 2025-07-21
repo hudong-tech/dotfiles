@@ -1,0 +1,39 @@
+# 项目唯一标识，建议与目录名一致，例如：proj-aimedia-isolaze-beacon
+name: PROJECT_NAME
+
+# 当前状态：active（进行中）/ planning（立项中）/ paused（暂停）/ done（已完成）
+status: planning
+
+# 所属业务线标签，用于分类统计、聚合看板等
+business_domain: ai
+
+# 项目负责人（GitHub / 企业微信 / 钉钉 ID 等）
+owner: "@yourname"
+
+# 项目启动日期（格式 YYYY-MM-DD）
+start_date: __START_DATE__
+
+# 项目计划交付日期（格式 YYYY-MM-DD）
+due_date: __DUE_DATE__
+
+# 优先级：P1（高）/ P2（中）/ P3（低）
+priority: P2
+
+# 技术栈信息（支持后续自动汇总）
+stack:
+  backend: TBD           # python / go / nodejs 等
+  frontend: TBD          # react / vue / nextjs 等
+  infra: TBD             # docker / k8s / cloudrun 等
+
+# 标签系统：支持灵活标注内容主题/功能范围
+tags:
+  - tag1                 # 如 beacon / tracking / AI
+  - tag2
+
+# 项目说明：一句话介绍项目的核心目标
+desc: "PROJECT_DESC"
+
+# 相关链接：可快速跳转外部资源（产品地址、文档等）
+links:
+  prod: ""               # 示例：https://app.company.com/beacon
+  doc: ""                # 示例：https://notion.so/project-beacon
