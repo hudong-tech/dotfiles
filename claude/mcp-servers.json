@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "智能上下文管理服务器，提供长期记忆和上下文理解能力，帮助 Claude 跨会话保持连贯性"
+    },
+    "browsermcp": {
+      "type": "stdio", 
+      "command": "npx",
+      "args": ["-y", "browser-mcp@latest"],
+      "description": "浏览器自动化工具服务器，提供网页浏览、数据抓取和页面交互功能，让 Claude 能够实时获取网页内容"
+    }
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "description": "Claude Code MCP 服务器配置清单",
+    "created": "2025-08-12",
+    "usage": "此配置文件定义了 Claude Code 可用的 MCP (Model Context Protocol) 服务器列表"
+  }
+}
