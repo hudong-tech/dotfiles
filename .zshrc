@@ -89,6 +89,9 @@ load_zsh_config "$DOTFILES/zsh/aliases.zsh"
 # 加载自定义函数
 load_zsh_config "$DOTFILES/zsh/functions.zsh"
 
+# 加载 Claude API 配置管理函数
+load_zsh_config "$DOTFILES/claude/claude.zsh"
+
 # 加载 dirtree 模块
 if [[ -f "$HOME/dotfiles/dirtree/functions.zsh" ]]; then
     source "$HOME/dotfiles/dirtree/functions.zsh"
@@ -222,3 +225,13 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+
+. "$HOME/.local/bin/env"
+export PATH="$HOME/.local/bin:$PATH"
+
+# bun completions
+[ -s "/Users/phil/.bun/_bun" ] && source "/Users/phil/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
