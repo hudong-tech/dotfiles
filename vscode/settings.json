@@ -42,5 +42,10 @@
     "editor.tabSize": 2,
     
     // 🖥️ 外部终端：在 macOS 上使用 iTerm2 作为外部终端
-    "terminal.external.osxExec": "/Applications/iTerm 2.app"
+    "terminal.external.osxExec": "/Applications/iTerm 2.app",
+    // 🌐 代理设置：让 VSCode 和插件通过本地代理转发所有请求
+    "http.proxy": "http://127.0.0.1:7897",
+    "http.proxyStrictSSL": false,
+    "workbench.settings.applyToAllProfiles": [],
+    "security.workspace.trust.untrustedFiles": "open"
 }
