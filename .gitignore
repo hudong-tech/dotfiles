@@ -134,4 +134,8 @@ site/
 # 特定于用户的配置文件（这些通常包含个人信息）
 .gitconfig.local
 .extra.zsh
-.private 
+.private
+
+# Claude API 配置文件（包含敏感的API密钥）
+claude/profiles/*.env
+!claude/profiles/*.env.template 
