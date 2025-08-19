@@ -1,0 +1,384 @@
+{
+  "agents": {
+    "ai-engineer": {
+      "name": "AI Engineer",
+      "description": "专注于 AI 模型开发、训练和部署的工程师",
+      "source": "https://github.com/wshobson/agents/blob/main/ai-engineer.md"
+    },
+    "api-documenter": {
+      "name": "API Documenter", 
+      "description": "专门编写和维护 API 文档的专家",
+      "source": "https://github.com/wshobson/agents/blob/main/api-documenter.md"
+    },
+    "architect-review": {
+      "name": "Architecture Reviewer",
+      "description": "系统架构审查和优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/architect-review.md"
+    },
+    "backend-architect": {
+      "name": "Backend Architect",
+      "description": "设计 RESTful API、微服务边界和数据库架构",
+      "source": "https://github.com/wshobson/agents/blob/main/backend-architect.md"
+    },
+    "business-analyst": {
+      "name": "Business Analyst",
+      "description": "业务需求分析和流程优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/business-analyst.md"
+    },
+    "c-pro": {
+      "name": "C Programming Expert",
+      "description": "C 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/c-pro.md"
+    },
+    "cloud-architect": {
+      "name": "Cloud Architect",
+      "description": "云平台架构设计和实施专家",
+      "source": "https://github.com/wshobson/agents/blob/main/cloud-architect.md"
+    },
+    "code-reviewer": {
+      "name": "Code Reviewer",
+      "description": "代码审查和质量保证专家",
+      "source": "https://github.com/wshobson/agents/blob/main/code-reviewer.md"
+    },
+    "content-marketer": {
+      "name": "Content Marketer",
+      "description": "内容营销策略和执行专家",
+      "source": "https://github.com/wshobson/agents/blob/main/content-marketer.md"
+    },
+    "context-manager": {
+      "name": "Context Manager",
+      "description": "上下文管理和会话连贯性专家",
+      "source": "https://github.com/wshobson/agents/blob/main/context-manager.md"
+    },
+    "cpp-pro": {
+      "name": "C++ Programming Expert",
+      "description": "C++ 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/cpp-pro.md"
+    },
+    "csharp-pro": {
+      "name": "C# Programming Expert",
+      "description": "C# 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/csharp-pro.md"
+    },
+    "customer-support": {
+      "name": "Customer Support",
+      "description": "客户支持和服务专家",
+      "source": "https://github.com/wshobson/agents/blob/main/customer-support.md"
+    },
+    "data-engineer": {
+      "name": "Data Engineer",
+      "description": "数据管道和 ETL 流程设计专家",
+      "source": "https://github.com/wshobson/agents/blob/main/data-engineer.md"
+    },
+    "data-scientist": {
+      "name": "Data Scientist",
+      "description": "数据分析和机器学习模型专家",
+      "source": "https://github.com/wshobson/agents/blob/main/data-scientist.md"
+    },
+    "database-admin": {
+      "name": "Database Administrator",
+      "description": "数据库管理和优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/database-admin.md"
+    },
+    "database-optimizer": {
+      "name": "Database Optimizer",
+      "description": "数据库性能优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/database-optimizer.md"
+    },
+    "debugger": {
+      "name": "Debugger",
+      "description": "代码调试和错误诊断专家",
+      "source": "https://github.com/wshobson/agents/blob/main/debugger.md"
+    },
+    "deployment-engineer": {
+      "name": "Deployment Engineer",
+      "description": "应用部署和发布管理专家",
+      "source": "https://github.com/wshobson/agents/blob/main/deployment-engineer.md"
+    },
+    "devops-troubleshooter": {
+      "name": "DevOps Troubleshooter",
+      "description": "DevOps 故障排除和系统诊断专家",
+      "source": "https://github.com/wshobson/agents/blob/main/devops-troubleshooter.md"
+    },
+    "docs-architect": {
+      "name": "Documentation Architect",
+      "description": "文档架构设计和信息组织专家",
+      "source": "https://github.com/wshobson/agents/blob/main/docs-architect.md"
+    },
+    "dx-optimizer": {
+      "name": "Developer Experience Optimizer",
+      "description": "开发者体验优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/dx-optimizer.md"
+    },
+    "elixir-pro": {
+      "name": "Elixir Programming Expert",
+      "description": "Elixir 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/elixir-pro.md"
+    },
+    "error-detective": {
+      "name": "Error Detective",
+      "description": "错误追踪和调试专家",
+      "source": "https://github.com/wshobson/agents/blob/main/error-detective.md"
+    },
+    "flutter-expert": {
+      "name": "Flutter Expert",
+      "description": "Flutter 移动应用开发专家",
+      "source": "https://github.com/wshobson/agents/blob/main/flutter-expert.md"
+    },
+    "frontend-developer": {
+      "name": "Frontend Developer",
+      "description": "构建 React 组件、实现响应式布局和处理客户端状态管理",
+      "source": "https://github.com/wshobson/agents/blob/main/frontend-developer.md"
+    },
+    "golang-pro": {
+      "name": "Go Programming Expert",
+      "description": "Go 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/golang-pro.md"
+    },
+    "graphql-architect": {
+      "name": "GraphQL Architect",
+      "description": "GraphQL API 设计和实现专家",
+      "source": "https://github.com/wshobson/agents/blob/main/graphql-architect.md"
+    },
+    "hr-pro": {
+      "name": "HR Professional",
+      "description": "人力资源管理和招聘专家",
+      "source": "https://github.com/wshobson/agents/blob/main/hr-pro.md"
+    },
+    "incident-responder": {
+      "name": "Incident Responder",
+      "description": "事件响应和故障处理专家",
+      "source": "https://github.com/wshobson/agents/blob/main/incident-responder.md"
+    },
+    "ios-developer": {
+      "name": "iOS Developer",
+      "description": "iOS 应用开发专家",
+      "source": "https://github.com/wshobson/agents/blob/main/ios-developer.md"
+    },
+    "java-pro": {
+      "name": "Java Programming Expert",
+      "description": "Java 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/java-pro.md"
+    },
+    "javascript-pro": {
+      "name": "JavaScript Programming Expert",
+      "description": "JavaScript 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/javascript-pro.md"
+    },
+    "legacy-modernizer": {
+      "name": "Legacy Modernizer",
+      "description": "遗留系统现代化改造专家",
+      "source": "https://github.com/wshobson/agents/blob/main/legacy-modernizer.md"
+    },
+    "legal-advisor": {
+      "name": "Legal Advisor",
+      "description": "法律咨询和合规专家",
+      "source": "https://github.com/wshobson/agents/blob/main/legal-advisor.md"
+    },
+    "mermaid-expert": {
+      "name": "Mermaid Expert",
+      "description": "Mermaid 图表制作专家",
+      "source": "https://github.com/wshobson/agents/blob/main/mermaid-expert.md"
+    },
+    "minecraft-bukkit-pro": {
+      "name": "Minecraft Bukkit Expert",
+      "description": "Minecraft Bukkit 插件开发专家",
+      "source": "https://github.com/wshobson/agents/blob/main/minecraft-bukkit-pro.md"
+    },
+    "ml-engineer": {
+      "name": "Machine Learning Engineer",
+      "description": "机器学习工程和模型部署专家",
+      "source": "https://github.com/wshobson/agents/blob/main/ml-engineer.md"
+    },
+    "mlops-engineer": {
+      "name": "MLOps Engineer",
+      "description": "机器学习运维和流水线管理专家",
+      "source": "https://github.com/wshobson/agents/blob/main/mlops-engineer.md"
+    },
+    "mobile-developer": {
+      "name": "Mobile Developer",
+      "description": "移动应用开发专家",
+      "source": "https://github.com/wshobson/agents/blob/main/mobile-developer.md"
+    },
+    "network-engineer": {
+      "name": "Network Engineer",
+      "description": "网络架构和配置专家",
+      "source": "https://github.com/wshobson/agents/blob/main/network-engineer.md"
+    },
+    "payment-integration": {
+      "name": "Payment Integration Specialist",
+      "description": "支付系统集成专家",
+      "source": "https://github.com/wshobson/agents/blob/main/payment-integration.md"
+    },
+    "performance-engineer": {
+      "name": "Performance Engineer",
+      "description": "系统性能优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/performance-engineer.md"
+    },
+    "php-pro": {
+      "name": "PHP Programming Expert",
+      "description": "PHP 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/php-pro.md"
+    },
+    "prompt-engineer": {
+      "name": "Prompt Engineer",
+      "description": "AI 提示工程和优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/prompt-engineer.md"
+    },
+    "python-pro": {
+      "name": "Python Programming Expert",
+      "description": "Python 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/python-pro.md"
+    },
+    "quant-analyst": {
+      "name": "Quantitative Analyst",
+      "description": "量化分析和金融建模专家",
+      "source": "https://github.com/wshobson/agents/blob/main/quant-analyst.md"
+    },
+    "reference-builder": {
+      "name": "Reference Builder",
+      "description": "参考文档和知识库构建专家",
+      "source": "https://github.com/wshobson/agents/blob/main/reference-builder.md"
+    },
+    "risk-manager": {
+      "name": "Risk Manager",
+      "description": "风险管理和评估专家",
+      "source": "https://github.com/wshobson/agents/blob/main/risk-manager.md"
+    },
+    "ruby-pro": {
+      "name": "Ruby Programming Expert",
+      "description": "Ruby 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/ruby-pro.md"
+    },
+    "rust-pro": {
+      "name": "Rust Programming Expert",
+      "description": "Rust 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/rust-pro.md"
+    },
+    "sales-automator": {
+      "name": "Sales Automator",
+      "description": "销售流程自动化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/sales-automator.md"
+    },
+    "scala-pro": {
+      "name": "Scala Programming Expert",
+      "description": "Scala 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/scala-pro.md"
+    },
+    "search-specialist": {
+      "name": "Search Specialist",
+      "description": "搜索引擎优化和搜索功能专家",
+      "source": "https://github.com/wshobson/agents/blob/main/search-specialist.md"
+    },
+    "security-auditor": {
+      "name": "Security Auditor",
+      "description": "安全审计和漏洞评估专家",
+      "source": "https://github.com/wshobson/agents/blob/main/security-auditor.md"
+    },
+    "seo-authority-builder": {
+      "name": "SEO Authority Builder",
+      "description": "SEO 权威性建设专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-authority-builder.md"
+    },
+    "seo-cannibalization-detector": {
+      "name": "SEO Cannibalization Detector",
+      "description": "SEO 关键词冲突检测专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-cannibalization-detector.md"
+    },
+    "seo-content-auditor": {
+      "name": "SEO Content Auditor",
+      "description": "SEO 内容审计专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-content-auditor.md"
+    },
+    "seo-content-planner": {
+      "name": "SEO Content Planner",
+      "description": "SEO 内容规划专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-content-planner.md"
+    },
+    "seo-content-refresher": {
+      "name": "SEO Content Refresher",
+      "description": "SEO 内容更新专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-content-refresher.md"
+    },
+    "seo-content-writer": {
+      "name": "SEO Content Writer",
+      "description": "SEO 内容写作专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-content-writer.md"
+    },
+    "seo-keyword-strategist": {
+      "name": "SEO Keyword Strategist",
+      "description": "SEO 关键词策略专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-keyword-strategist.md"
+    },
+    "seo-meta-optimizer": {
+      "name": "SEO Meta Optimizer",
+      "description": "SEO 元数据优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-meta-optimizer.md"
+    },
+    "seo-snippet-hunter": {
+      "name": "SEO Snippet Hunter",
+      "description": "SEO 精选摘要优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-snippet-hunter.md"
+    },
+    "seo-structure-architect": {
+      "name": "SEO Structure Architect",
+      "description": "SEO 网站结构架构专家",
+      "source": "https://github.com/wshobson/agents/blob/main/seo-structure-architect.md"
+    },
+    "swift-pro": {
+      "name": "Swift Programming Expert",
+      "description": "Swift 语言编程专家",
+      "source": "https://github.com/wshobson/agents/blob/main/swift-pro.md"
+    },
+    "system-architect": {
+      "name": "System Architect",
+      "description": "系统架构设计专家",
+      "source": "https://github.com/wshobson/agents/blob/main/system-architect.md"
+    },
+    "tech-lead": {
+      "name": "Tech Lead",
+      "description": "技术团队领导和架构决策专家",
+      "source": "https://github.com/wshobson/agents/blob/main/tech-lead.md"
+    },
+    "test-engineer": {
+      "name": "Test Engineer",
+      "description": "软件测试和质量保证专家",
+      "source": "https://github.com/wshobson/agents/blob/main/test-engineer.md"
+    },
+    "ui-ux-designer": {
+      "name": "UI/UX Designer",
+      "description": "创建界面设计、线框图和设计系统",
+      "source": "https://github.com/wshobson/agents/blob/main/ui-ux-designer.md"
+    },
+    "web-scraper": {
+      "name": "Web Scraper",
+      "description": "网页数据抓取和自动化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/web-scraper.md"
+    }
+  },
+  "_metadata": {
+    "version": "1.0.0",
+    "total_agents": 75,
+    "description": "Claude Code 专业化 Agent 配置清单，来源于 wshobson/agents 仓库",
+    "source_repository": "https://github.com/wshobson/agents",
+    "installation_date": "2025-08-19",
+    "categories": {
+      "programming": ["c-pro", "cpp-pro", "csharp-pro", "elixir-pro", "golang-pro", "java-pro", "javascript-pro", "php-pro", "python-pro", "ruby-pro", "rust-pro", "scala-pro", "swift-pro"],
+      "development": ["backend-architect", "frontend-developer", "mobile-developer", "ios-developer", "flutter-expert"],
+      "devops": ["cloud-architect", "deployment-engineer", "devops-troubleshooter", "network-engineer"],
+      "data": ["data-engineer", "data-scientist", "ml-engineer", "mlops-engineer", "quant-analyst"],
+      "database": ["database-admin", "database-optimizer"],
+      "testing": ["test-engineer", "debugger", "error-detective"],
+      "design": ["ui-ux-designer"],
+      "security": ["security-auditor"],
+      "seo": ["seo-authority-builder", "seo-cannibalization-detector", "seo-content-auditor", "seo-content-planner", "seo-content-refresher", "seo-content-writer", "seo-keyword-strategist", "seo-meta-optimizer", "seo-snippet-hunter", "seo-structure-architect"],
+      "business": ["business-analyst", "hr-pro", "legal-advisor", "risk-manager", "sales-automator"],
+      "documentation": ["api-documenter", "docs-architect", "reference-builder"],
+      "architecture": ["architect-review", "system-architect", "tech-lead", "graphql-architect"],
+      "performance": ["performance-engineer", "dx-optimizer"],
+      "support": ["customer-support", "incident-responder"],
+      "content": ["content-marketer"],
+      "specialized": ["ai-engineer", "prompt-engineer", "context-manager", "mermaid-expert", "minecraft-bukkit-pro", "payment-integration", "search-specialist", "web-scraper", "legacy-modernizer", "code-reviewer"]
+    }
+  }
+}

@@ -11,6 +11,12 @@
       "command": "npx",
       "args": ["-y", "browser-mcp@latest"],
       "description": "浏览器自动化工具服务器，提供网页浏览、数据抓取和页面交互功能，让 Claude 能够实时获取网页内容"
+    },
+    "agents-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "agent-mcp@latest"],
+      "description": "专业化 Agent 管理服务器，提供 75+ 种专业领域的 AI Agent，包括后端架构师、前端开发者、UI/UX 设计师、数据科学家等"
     }
   },
   "_metadata": {
