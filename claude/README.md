@@ -43,6 +43,9 @@ claude-use official
 # 切换到代理API
 claude-use proxy
 
+# 为GUI应用程序设置环境变量
+claude-set-gui-env
+
 # 查看当前配置状态
 claude-use status
 
