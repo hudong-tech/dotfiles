@@ -1,0 +1,91 @@
+/*
+ * Claude Code MCP 服务器配置清单
+ * 
+ * WHY (为什么需要这个文件):
+ * - 统一管理所有可用的 MCP 服务器配置信息
+ * - 为 Claude Code 提供扩展功能支持 (浏览器自动化、数据库管理、代码仓库集成等)
+ * - 简化 MCP 服务器的发现和配置流程
+ * - 保持团队开发环境的一致性和标准化
+ * 
+ * WHAT (这个文件是什么):
+ * - MCP (Model Context Protocol) 服务器配置注册表
+ * - 包含 6 个核心功能服务器的完整配置信息
+ * - 每个服务器都包含 type、command、args 和功能描述
+ * - 支持 stdio 类型的本地进程连接方式
+ * 
+ * HOW (快速开始 - 命令拼接规则):
+ * 
+ * 通用格式: claude mcp add <name> -- <command> <...args>
+ * 
+ * 根据此文件中的配置自动生成命令:
+ * - name: JSON 中的键名 (如 "context7")
+ * - command: JSON 中的 "command" 字段 (如 "npx")  
+ * - args: JSON 中的 "args" 数组展开 (如 ["-y", "@upstash/context7-mcp@latest"])
+ * 
+ * 具体命令示例:
+ * claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
+ * claude mcp add browsermcp -- npx -y browser-mcp@latest
+ * claude mcp add agents-mcp -- npx -y agent-mcp@latest
+ * claude mcp add playwright -- npx -y playwright-mcp@latest
+ * claude mcp add supabase -- npx -y supabase-mcp@latest
+ * claude mcp add github -- npx -y github-mcp@latest
+ * 
+ * 验证安装: claude mcp list
+ * 
+ * 注意事项:
+ * - 不能直接使用此配置文件，Claude Code 需要通过 claude mcp add 命令注册
+ * - 某些服务器可能需要额外的环境变量 (如 GitHub 需要 GITHUB_TOKEN)
+ * - 使用 -- 分隔 claude mcp 参数和要执行的命令
+ */
+
+{
+  "mcpServers": {
+    /* 智能上下文管理服务器 - 提供长期记忆和上下文理解能力 */
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "智能上下文管理服务器，提供长期记忆和上下文理解能力，帮助 Claude 跨会话保持连贯性"
+    },
+    
+    /* 浏览器自动化工具服务器 - 提供网页浏览、数据抓取和页面交互功能 */
+    "browsermcp": {
+      "type": "stdio", 
+      "command": "npx",
+      "args": ["-y", "browser-mcp@latest"],
+      "description": "浏览器自动化工具服务器，提供网页浏览、数据抓取和页面交互功能，让 Claude 能够实时获取网页内容"
+    },
+    
+    /* 专业化 Agent 管理服务器 - 提供 75+ 种专业领域的 AI Agent */
+    "agents-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "agent-mcp@latest"],
+      "description": "专业化 Agent 管理服务器，提供 75+ 种专业领域的 AI Agent，包括后端架构师、前端开发者、UI/UX 设计师、数据科学家等"
+    },
+    
+    /* Playwright 浏览器自动化服务器 - 提供高级网页自动化和测试功能 */
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "playwright-mcp@latest"],
+      "description": "Playwright 浏览器自动化服务器，提供高级网页自动化、测试和数据抓取功能，支持多浏览器引擎"
+    },
+    
+    /* Supabase 数据库管理服务器 - 提供实时数据库操作和用户认证 */
+    "supabase": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "supabase-mcp@latest"],
+      "description": "Supabase 数据库管理服务器，提供实时数据库操作、用户认证、存储管理和 API 生成功能"
+    },
+    
+    /* GitHub 集成服务器 - 提供仓库管理、Issue 跟踪、PR 处理功能 */
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "github-mcp@latest"],
+      "description": "GitHub 集成服务器，提供仓库管理、Issue 跟踪、PR 处理、代码搜索和协作工具功能"
+    }
+  }
+}

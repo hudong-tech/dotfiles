@@ -145,6 +145,11 @@
       "description": "人力资源管理和招聘专家",
       "source": "https://github.com/wshobson/agents/blob/main/hr-pro.md"
     },
+    "hybrid-cloud-architect": {
+      "name": "Hybrid Cloud Architect",
+      "description": "混合云架构设计和 OpenStack 集成专家",
+      "source": "https://github.com/wshobson/agents/blob/main/hybrid-cloud-architect.md"
+    },
     "incident-responder": {
       "name": "Incident Responder",
       "description": "事件响应和故障处理专家",
@@ -164,6 +169,11 @@
       "name": "JavaScript Programming Expert",
       "description": "JavaScript 语言编程专家",
       "source": "https://github.com/wshobson/agents/blob/main/javascript-pro.md"
+    },
+    "kubernetes-architect": {
+      "name": "Kubernetes Architect",
+      "description": "云原生基础设施和 GitOps 工作流专家",
+      "source": "https://github.com/wshobson/agents/blob/main/kubernetes-architect.md"
     },
     "legacy-modernizer": {
       "name": "Legacy Modernizer",
@@ -325,60 +335,65 @@
       "description": "SEO 网站结构架构专家",
       "source": "https://github.com/wshobson/agents/blob/main/seo-structure-architect.md"
     },
-    "swift-pro": {
-      "name": "Swift Programming Expert",
-      "description": "Swift 语言编程专家",
-      "source": "https://github.com/wshobson/agents/blob/main/swift-pro.md"
+    "sql-pro": {
+      "name": "SQL Programming Expert",
+      "description": "SQL 查询优化和数据库设计专家",
+      "source": "https://github.com/wshobson/agents/blob/main/sql-pro.md"
     },
-    "system-architect": {
-      "name": "System Architect",
-      "description": "系统架构设计专家",
-      "source": "https://github.com/wshobson/agents/blob/main/system-architect.md"
+    "terraform-specialist": {
+      "name": "Terraform Specialist",
+      "description": "Terraform 模块设计和状态管理专家",
+      "source": "https://github.com/wshobson/agents/blob/main/terraform-specialist.md"
     },
-    "tech-lead": {
-      "name": "Tech Lead",
-      "description": "技术团队领导和架构决策专家",
-      "source": "https://github.com/wshobson/agents/blob/main/tech-lead.md"
+    "test-automator": {
+      "name": "Test Automator",
+      "description": "测试自动化和 CI/CD 测试流水线专家",
+      "source": "https://github.com/wshobson/agents/blob/main/test-automator.md"
     },
-    "test-engineer": {
-      "name": "Test Engineer",
-      "description": "软件测试和质量保证专家",
-      "source": "https://github.com/wshobson/agents/blob/main/test-engineer.md"
+    "tutorial-engineer": {
+      "name": "Tutorial Engineer",
+      "description": "技术教程和教育内容创建专家",
+      "source": "https://github.com/wshobson/agents/blob/main/tutorial-engineer.md"
+    },
+    "typescript-pro": {
+      "name": "TypeScript Programming Expert",
+      "description": "TypeScript 高级类型系统和企业开发专家",
+      "source": "https://github.com/wshobson/agents/blob/main/typescript-pro.md"
     },
     "ui-ux-designer": {
       "name": "UI/UX Designer",
       "description": "创建界面设计、线框图和设计系统",
       "source": "https://github.com/wshobson/agents/blob/main/ui-ux-designer.md"
     },
-    "web-scraper": {
-      "name": "Web Scraper",
-      "description": "网页数据抓取和自动化专家",
-      "source": "https://github.com/wshobson/agents/blob/main/web-scraper.md"
+    "unity-developer": {
+      "name": "Unity Developer",
+      "description": "Unity 游戏开发和性能优化专家",
+      "source": "https://github.com/wshobson/agents/blob/main/unity-developer.md"
     }
   },
   "_metadata": {
     "version": "1.0.0",
-    "total_agents": 75,
+    "total_agents": 74,
     "description": "Claude Code 专业化 Agent 配置清单，来源于 wshobson/agents 仓库",
     "source_repository": "https://github.com/wshobson/agents",
     "installation_date": "2025-08-19",
     "categories": {
-      "programming": ["c-pro", "cpp-pro", "csharp-pro", "elixir-pro", "golang-pro", "java-pro", "javascript-pro", "php-pro", "python-pro", "ruby-pro", "rust-pro", "scala-pro", "swift-pro"],
-      "development": ["backend-architect", "frontend-developer", "mobile-developer", "ios-developer", "flutter-expert"],
-      "devops": ["cloud-architect", "deployment-engineer", "devops-troubleshooter", "network-engineer"],
+      "programming": ["c-pro", "cpp-pro", "csharp-pro", "elixir-pro", "golang-pro", "java-pro", "javascript-pro", "php-pro", "python-pro", "ruby-pro", "rust-pro", "scala-pro", "sql-pro", "typescript-pro"],
+      "development": ["backend-architect", "frontend-developer", "mobile-developer", "ios-developer", "flutter-expert", "unity-developer"],
+      "devops": ["cloud-architect", "deployment-engineer", "devops-troubleshooter", "hybrid-cloud-architect", "kubernetes-architect", "network-engineer", "terraform-specialist"],
       "data": ["data-engineer", "data-scientist", "ml-engineer", "mlops-engineer", "quant-analyst"],
       "database": ["database-admin", "database-optimizer"],
-      "testing": ["test-engineer", "debugger", "error-detective"],
+      "testing": ["test-automator", "debugger", "error-detective"],
       "design": ["ui-ux-designer"],
       "security": ["security-auditor"],
       "seo": ["seo-authority-builder", "seo-cannibalization-detector", "seo-content-auditor", "seo-content-planner", "seo-content-refresher", "seo-content-writer", "seo-keyword-strategist", "seo-meta-optimizer", "seo-snippet-hunter", "seo-structure-architect"],
       "business": ["business-analyst", "hr-pro", "legal-advisor", "risk-manager", "sales-automator"],
       "documentation": ["api-documenter", "docs-architect", "reference-builder"],
-      "architecture": ["architect-review", "system-architect", "tech-lead", "graphql-architect"],
+      "architecture": ["architect-review", "graphql-architect"],
       "performance": ["performance-engineer", "dx-optimizer"],
       "support": ["customer-support", "incident-responder"],
       "content": ["content-marketer"],
-      "specialized": ["ai-engineer", "prompt-engineer", "context-manager", "mermaid-expert", "minecraft-bukkit-pro", "payment-integration", "search-specialist", "web-scraper", "legacy-modernizer", "code-reviewer"]
+      "specialized": ["ai-engineer", "prompt-engineer", "context-manager", "mermaid-expert", "minecraft-bukkit-pro", "payment-integration", "search-specialist", "tutorial-engineer", "legacy-modernizer", "code-reviewer"]
     }
   }
 }
