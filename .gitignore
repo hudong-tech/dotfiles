@@ -73,6 +73,12 @@ credentials.*
 .zplug/
 
 # iTerm2
+# 服务器连接脚本（包含密码等敏感信息）
+iterm2/servers/*-*.sh
+!iterm2/servers/templates/server-template.sh
+
+# iTerm2 配置文件（可能包含服务器脚本路径等敏感信息）
+iterm2/com.googlecode.iterm2.plist
 
 # Homebrew
 Brewfile.lock.json

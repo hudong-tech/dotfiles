@@ -121,6 +121,31 @@ cp ~/Library/Preferences/com.googlecode.iterm2.plist.backup ~/Library/Preference
 2. 检查是否正确选择了 Dracula 颜色预设
 3. 重新导入 `Dracula.itermcolors` 文件
 
+## 服务器连接配置
+
+### 🎯 iTerm2配置
+
+如果您创建了服务器连接脚本（如 `ali-3-wulanchabu.sh`），可以通过以下方式配置：
+
+1. **打开iTerm2偏好设置**：`iTerm2` → `Preferences` (或按 `⌘,`)
+2. **创建新Profile**：
+   - 选择 `Profiles` 标签
+   - 点击左下角的 `+` 创建新profile
+   - 命名为服务器名称（如 `阿里云-3-乌兰察布`）
+3. **配置连接命令**：
+   - 在 `General` 标签下
+   - **Command**: 选择 `Custom Shell`
+   - 输入：`/Users/phil/dotfiles/iterm2/ali-3-wulanchabu.sh`
+
+### 📋 服务器脚本说明
+- 服务器连接脚本包含敏感信息（密码等），已在 `.gitignore` 中排除
+- 可以复制 `servers/templates/server-template.sh` 模板创建新的服务器连接脚本
+- 新脚本请遵循命名格式：`服务器名-*.sh`
+
+### 🔒 安全提醒
+- 服务器连接脚本包含明文密码，仅在本地使用
+- 不要将包含敏感信息的脚本提交到版本控制系统
+
 ---
 
 **享受更好的终端体验！** 🚀 
