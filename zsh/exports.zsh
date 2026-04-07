@@ -58,35 +58,36 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 export GPG_TTY=$(tty)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Clash Verge mixed-port（HTTP + SOCKS5）代理设置：端口 7897
+# 暂时不需要代理
+# Clash Verge mixed-port（HTTP + SOCKS5）代理设置：端口 7897  
 # ──────────────────────────────────────────────────────────────────────────────
 
 # 1. HTTP/HTTPS 代理指向 127.0.0.1:7897
-export HTTP_PROXY="http://127.0.0.1:7897"
-export HTTPS_PROXY="http://127.0.0.1:7897"
-export http_proxy="$HTTP_PROXY"
-export https_proxy="$HTTPS_PROXY"
+# export HTTP_PROXY="http://127.0.0.1:7897"
+# export HTTPS_PROXY="http://127.0.0.1:7897"
+# export http_proxy="$HTTP_PROXY"
+# export https_proxy="$HTTPS_PROXY"
 
 # 2. SOCKS5 全局代理也指向同一端口
-export ALL_PROXY="socks5://127.0.0.1:7897"
-export all_proxy="$ALL_PROXY"
+# export ALL_PROXY="socks5://127.0.0.1:7897"
+# export all_proxy="$ALL_PROXY"
 
 # 3. 本地地址不走代理
-export NO_PROXY="127.0.0.1,localhost,::1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12"
-export no_proxy="$NO_PROXY"
+# export NO_PROXY="127.0.0.1,localhost,::1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12"
+# export no_proxy="$NO_PROXY"
 
 # 4. 让 Git 也走同样的代理
-git config --global http.proxy "$HTTP_PROXY"
-git config --global https.proxy "$HTTPS_PROXY"
+# git config --global http.proxy "$HTTP_PROXY"
+# git config --global https.proxy "$HTTPS_PROXY"
 
 # 5. 代理管理函数（添加到 functions.zsh 中调用）
 # 这些函数可以方便地开关代理
 proxy_on() {
-    export HTTP_PROXY="http://127.0.0.1:7897"
-    export HTTPS_PROXY="http://127.0.0.1:7897"
+    export HTTP_PROXY="http://127.0.0.1:10808"
+    export HTTPS_PROXY="http://127.0.0.1:10808"
     export http_proxy="$HTTP_PROXY"
     export https_proxy="$HTTPS_PROXY"
-    export ALL_PROXY="socks5://127.0.0.1:7897"
+    export ALL_PROXY="socks5://127.0.0.1:10808"
     export all_proxy="$ALL_PROXY"
     export NO_PROXY="127.0.0.1,localhost,::1,192.168.0.0/16,10.0.0.0/12,172.16.0.0/12"
     export no_proxy="$NO_PROXY"
